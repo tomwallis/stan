@@ -14,7 +14,7 @@
 #PBS -V
 
 cd ${STAN_HOME}
-TEST=${TEST_ARRAY[`expr ${PBS_ARRAYID} + 1`]}
+TEST=${TEST_ARRAY[${PBS_ARRAYID}]}
 OUT=${TEST//"/"/"-"}
 /usr/bin/time --output=${OUTPUT}/${PBS_JOBNAME}_timings.txt --append -f "%C: %E" \
 make CC=${CC} ${TEST} > ${OUT}.txt 2> ${OUT}.txt
