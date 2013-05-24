@@ -14,10 +14,11 @@
 #PBS -V
 
 cd ${STAN_HOME}
-TEST=${TEST_ARRAY[${PBS_ARRAYID}]}
+LINE=`expr ${PBS_ARRAYID} + 1`
+TEST=`sed -ne ${LINE}p ${OUTPUT}/tests.txt`
 OUT=${TEST//"/"/"-"}
-/usr/bin/time --output=${OUTPUT}/${PBS_JOBNAME}_timings.txt --append -f "%C: %E" \
-make CC=${CC} ${TEST} > ${OUT}.txt 2> ${OUT}.txt
+/usr/bin/time --output=${OUTPUT}/test_timings.txt --append -f "%C: %E" \
+make ${TEST}
 
 exit 0
 # End of script

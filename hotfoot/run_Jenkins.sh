@@ -80,25 +80,20 @@ fi
 OUTPUT=${STAN_HOME}/hotfoot/${GIT_BRANCH}/${GIT_COMMIT}
 trap "rm -rf hotfoot/$GIT_BRANCH}" EXIT
 
-# Gather *_test.cpp files under src/test/, excluding src/test/models/
-unset TEST_ARRAY
-unset i
-while IFS= read -r -d $'\0' file; do
-  if [[ "$file" != *src/test/models/* ]]
-  then
-    TEST=${file#"src/"}
-    TEST_ARRAY[i++]=${TEST%"_test.cpp"}
-  fi
-done < <(find src/test/ -type f -name "*_test.cpp" -print0)
-
-# Execute these tests individually but in parallel using a job array
-TUSO=${OUTPUT}/test-unit/stdout
-TUSE=${OUTPUT}/test-unit/stderr
+TUSO=${OUTPUT}/test-unit/stdout/
+TUSE=${OUTPUT}/test-unit/stderr/
 mkdir -p ${TUSO}
 mkdir -p ${TUSE}
 
-TEST_ARRAY_MAX=`expr ${#TEST_ARRAY[@]} - 1`
-qsub -N 'test-unit' -t 0-${TEST_ARRAY_MAX} -l walltime 0:00:00:30 \
+# Gather *_test.cpp files under src/test/, excluding src/test/models/
+find src/test/ -type f -name "*_test.cpp" -print | \
+grep -v -F "src/test/models" |
+sed 's@src/@@g' | sed 's@_test.cpp@@' > ${OUTPUT}/tests.txt
+
+# Execute these tests individually but in parallel using a job array
+TEST_MAX=`wc -l ${OUTPUT}/tests.txt`
+TEST_MAX=`expr ${TEST_MAX} - 1`
+qsub -N 'test-unit' -t 0-${TEST_MAX} -l walltime=0:00:00:59 \
 -o localhost:${TUSO} -e localhost:${TUSE} -I -x hotfoot/test.sh
 CODE = parse_output()
 [ ${CODE} -ne 0 ] && exit ${CODE}
@@ -112,18 +107,22 @@ while IFS= read -r -d $'\0' file; do
 done < <(find src/test/models -type f -name "*_test.cpp" -print0)
 
 # Execute them
-TMSO=${OUTPUT}/test-models/stdout
-TMSE=${OUTPUT}/test-models/stderr
+TMSO=${OUTPUT}/test-models/stdout/
+TMSE=${OUTPUT}/test-models/stderr/
 mkdir -p ${TDSO}
 mkdir -p ${TDSE}
 
-TEST_ARRAY_MAX=`expr ${#TEST_ARRAY[@]} - 1`
-qsub -N 'test-models' -t 0-${TEST_ARRAY_MAX} -l walltime=0:00:10:00 \
+find src/test/models -type f -name "*_test.cpp" -print \
+sed 's@src/@@g' | sed 's@_test.cpp@@' > ${OUTPUT}/tests.txt
+
+TEST_MAX=`wc -l ${OUTPUT}/tests.txt`
+TEST_MAX=`expr ${TEST_MAX} - 1`
+qsub -N 'test-models' -t 0-${TEST_MAX} -l walltime=0:00:10:00 \
 -o localhost:${TMSO} -e localhost:${TMSE} -I -x hotfoot/test.sh
 CODE = parse_output()
 [ ${CODE} -ne 0 ] && exit ${CODE}
 
-# Gather distribution tests
+# Gather distribution tests (FIXME)
 unset TEST_ARRAY
 unset i
 while IFS= read -r -d $'\0' file; do
@@ -159,7 +158,7 @@ echo "But the following are all the unique lines with warnings:"
 grep -r -h -F "warning:" ${OUTPUT} \
 --exclude-dir=${TUSO} --exclude-dir=${TMSO} --exclude-dir=${TDSO}  | grep ^src | sort | uniq
 echo "The walltimes of the tests were:"
-cat $OUTPUT/*_timings.txt
+cat $OUTPUT/test_timings.txt
 
 make clean-all > /dev/null
 exit 0
