@@ -3,7 +3,7 @@
 # this function looks for errors or test failures
 parse_output() {
 
-ERRORS=`grep -l -F "error:" ${OUTPUT}/$1/stderr/*`
+ERRORS=`grep -l "[error|killed]:" ${OUTPUT}/$1/stderr/*`
 if [ -z "$ERRORS" ]
 then
   echo "$1 has build, link, etc. errors"
@@ -30,8 +30,8 @@ GIT_COMMIT=`git rev-parse HEAD`
 GIT_BRANCH=`git rev-parse --abbrev-ref HEAD`
 STAN_HOME=/hpc/stats/projects/stan
 
-CCACHE_SLOPPINESS=include_file_mtime
-CCACHE_DIR=/tmp/stan/.ccache/
+export CCACHE_SLOPPINESS=include_file_mtime
+export CCACHE_DIR=localhost:/tmp/stan/.ccache/
 CC="ccache clang++ -Qunused-arguments"
 
 cd ${STAN_HOME}
@@ -78,7 +78,7 @@ then
 fi
 
 OUTPUT=${STAN_HOME}/hotfoot/${GIT_BRANCH}/${GIT_COMMIT}
-trap "rm -rf hotfoot/$GIT_BRANCH}" EXIT
+trap "rm -rf hotfoot/${GIT_BRANCH}" EXIT
 
 TUSO=${OUTPUT}/test-unit/stdout/
 TUSE=${OUTPUT}/test-unit/stderr/
@@ -91,7 +91,7 @@ grep -v -F "src/test/models" |
 sed 's@src/@@g' | sed 's@_test.cpp@@' > ${OUTPUT}/tests.txt
 
 # Execute these tests individually but in parallel using a job array
-TEST_MAX=`wc -l ${OUTPUT}/tests.txt`
+TEST_MAX=`wc -l ${OUTPUT}/tests.txt | cut -f1 -d ' '`
 TEST_MAX=`expr ${TEST_MAX} - 1`
 qsub -N 'test-unit' -t 0-${TEST_MAX} -l walltime=0:00:00:59 \
 -o localhost:${TUSO} -e localhost:${TUSE} -I -x hotfoot/test.sh
