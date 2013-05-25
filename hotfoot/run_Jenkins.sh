@@ -31,9 +31,9 @@ export GIT_BRANCH=`git rev-parse --abbrev-ref HEAD`
 export STAN_HOME=/hpc/stats/projects/stan
 
 export CCACHE_SLOPPINESS=include_file_mtime
-export CCACHE_DIR=localhost:/tmp/stan/.ccache/
+export CCACHE_DIR=/hpc/tmp/stan/.ccache/
+mkdir -p ${CCACHE_DIR}
 CC="ccache clang++ -Qunused-arguments"
-CC=clang++
 
 cd ${STAN_HOME}
 
