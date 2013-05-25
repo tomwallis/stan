@@ -4,5 +4,5 @@ LINE=`expr ${PBS_ARRAYID} + 1`
 TEST=`sed -ne ${LINE}p ${OUTPUT}/tests.txt`
 OUT=${OUTPUT}/${PBS_JOBNAME}
 /usr/bin/time --output=${OUTPUT}/test_timings.txt --append -f "${TEST}: %E" \
-make CC="${CC}" ${TEST} > ${OUT}/stdout/o.${PBS_JOBID} 2> ${OUT}/stderr/e.${PBS_JOBID}
+make CC="${CC}" ${TEST}
 exit 0

@@ -31,9 +31,9 @@ export GIT_BRANCH=`git rev-parse --abbrev-ref HEAD`
 export STAN_HOME=/hpc/stats/projects/stan
 
 export CCACHE_SLOPPINESS=include_file_mtime
-export CCACHE_DIR=/hpc/tmp/stan/.ccache/
+export CCACHE_DIR=${STAN_HOME}/.ccache
 mkdir -p ${CCACHE_DIR}
-CC="ccache clang++ -Qunused-arguments"
+export CC="ccache clang++ -Qunused-arguments"
 
 cd ${STAN_HOME}
 
@@ -45,14 +45,14 @@ then
 fi
 
 # No need to shuffle tests on Hotfoot
-git revert 83e1b2eed4298ba0cd2b519bce7fe25289440df7
+git revert --no-edit --no-commit 83e1b2eed4298ba0cd2b519bce7fe25289440df7
 trap "git reset --hard HEAD" EXIT
 
 mkdir -p hotfoot/${GIT_BRANCH}/${GIT_COMMIT}
 export OUTPUT=${STAN_HOME}/hotfoot/${GIT_BRANCH}/${GIT_COMMIT}
 trap "rm -rf hotfoot/${GIT_BRANCH}" EXIT
 
-alias QSUB='qsub -W group_list=hpcstats -l nodes=1,mem=2gb -M bg2382@columbia.edu -m n -V -I -q batch1'
+alias QSUB='qsub -W group_list=hpcstats -l mem=2gb -M bg2382@columbia.edu -m n -V'
 
 CODE=1
 # Create dependencies of all tests
@@ -64,7 +64,7 @@ then
 fi
 
 ((CODE++))
-nice make CC=${CC} -j4 test/libgtest.a
+nice make CC="${CC}" -j4 test/libgtest.a
 if [ $? -ne 0 ]
 then
   echo "make test/libgtest.a failed; aborting"
@@ -72,7 +72,7 @@ then
 fi
 
 ((CODE++))
-nice make CC=${CC} -j4 bin/libstan.a
+nice make CC="${CC}" -j4 bin/libstan.a
 if [ $? -ne 0 ]
 then
   echo "make bin/libstan.a failed; aborting"
@@ -80,7 +80,7 @@ then
 fi
 
 ((CODE++))
-QSUB -N stanc -l walltime=0:00:04:59 -x "bash hotfoot/stanc.sh"
+QSUB -N stanc -l nodes=1:ppn=5 -l walltime=0:00:04:59 -I -q bash1 -x "bash hotfoot/stanc.sh"
 if [ ! -e "bin/stanc" ]
 then
   cat ${OUTPUT}/stanc_stdout.txt
@@ -90,7 +90,7 @@ then
 fi
 
 ((CODE++))
-nice make CC=${CC} -j4 src/test/agrad/distributions/generate_tests
+nice make CC="${CC}" -j4 src/test/agrad/distributions/generate_tests
 if [ $? -ne 0 ]
 then
   echo "make generate_tests failed; aborting"
@@ -114,8 +114,10 @@ TEST_MAX=`expr ${TEST_MAX} - 1`
 
 # test-libstan
 TARGET='test-libstan'
-mkdir -p ${OUTPUT}/${TARGET}/stdout/
-mkdir -p ${OUTPUT}/test-libstan/stderr/
+SO=${OUTPUT}/${TARGET}/stdout/
+SE=${OUTPUT}/${TARGET}/stderr/
+mkdir -p ${SO}
+mkdir -p ${SE}
 
 find src/test/ -type f -name "*_test.cpp" -print | \
 grep -v -F "src/test/models" |
@@ -123,35 +125,44 @@ sed 's@src/@@g' | sed 's@_test.cpp@@g' > ${OUTPUT}/tests.txt
 
 TEST_MAX=`wc -l ${OUTPUT}/tests.txt | cut -f1 -d ' '`
 TEST_MAX=`expr ${TEST_MAX} - 1`
-QSUB -N "${TARGET}" -t 0-${TEST_MAX} -l walltime=0:00:00:59 -x "bash hotfoot/test.sh"
+QSUB -N "${TARGET}" -t 0-${TEST_MAX} -l walltime=0:00:00:59 \
+-o localhost:${SO} -e localhost:${SE} hotfoot/test.sh
 CODE = parse_output "${TARGET}"
 [ ${CODE} -ne 0 ] && exit ${CODE}
 
 # test-gm
 TARGET='test-gm'
-mkdir -p ${OUTPUT}/${TARGET}/stdout/
-mkdir -p ${OUTPUT}/${TARGET}/stderr/
+SO=${OUTPUT}/${TARGET}/stdout/
+SE=${OUTPUT}/${TARGET}/stderr/
+mkdir -p ${SO}
+mkdir -p ${SE}
 
 find src/test/gm/model_specs/compiled -type f -name "*.stan" -print | \
 sed 's@.stan@@g' > ${OUTPUT}/tests.txt
 
 TEST_MAX=`wc -l ${OUTPUT}/tests.txt | cut -f1 -d ' '`
 TEST_MAX=`expr ${TEST_MAX} - 1`
-QSUB -N "${TARGET}" -t 0-${TEST_MAX} -l walltime=0:00:01:59 -x "bash hotfoot/test.sh"
+QSUB -N "${TARGET}" -t 0-${TEST_MAX} -l walltime=0:00:01:59 \
+-o localhost:${SO} -e localhost:${SE} hotfoot/test.sh
+
 CODE = parse_output "${TARGET}"
 [ ${CODE} -ne 0 ] && exit ${CODE}
 
 # test-models
 TARGET='test-models'
-mkdir -p ${OUTPUT}/${TARGET}/stdout/
-mkdir -p ${OUTPUT}/${TARGET}/stderr/
+SO=${OUTPUT}/${TARGET}/stdout/
+SE=${OUTPUT}/${TARGET}/stderr/
+mkdir -p ${SO}
+mkdir -p ${SE}
 
 find src/test/models -type f -name "*_test.cpp" -print | \
 sed 's@src/@@g' | sed 's@_test.cpp@@g' > ${OUTPUT}/tests.txt
 
 TEST_MAX=`wc -l ${OUTPUT}/tests.txt`
 TEST_MAX=`expr ${TEST_MAX} - 1`
-QSUB -N "${TARGET}" -t 0-${TEST_MAX} -l walltime=0:00:4:59 -x "bash hotfoot/test.sh"
+QSUB -N "${TARGET}" -t 0-${TEST_MAX} -l walltime=0:00:4:59
+-o localhost:${SO} -e localhost:${SE} hotfoot/test.sh
+
 CODE = parse_output "${TARGET}"
 [ ${CODE} -ne 0 ] && exit ${CODE}
 
@@ -174,8 +185,10 @@ CODE = parse_output "${TARGET}"
 
 # test-distributions
 TARGET='test-distributions'
-mkdir -p ${OUTPUT}/${TARGET}/stdout/
-mkdir -p ${OUTPUT}/${TARGET}/stderr/
+SO=${OUTPUT}/${TARGET}/stdout/
+SE=${OUTPUT}/${TARGET}/stderr/
+mkdir -p ${SO}
+mkdir -p ${SE}
 
 find src/test/agrad/distributions/univariate/ -type f -name "*_test.hpp" -print | \
 grep -v -F "cdf" | \
@@ -185,7 +198,9 @@ sed 's@src/@@g' | sed 's@_test.hpp@_00000_generated@g' > ${OUTPUT}/tests.txt
 
 TEST_MAX=`wc -l ${OUTPUT}/tests.txt`
 TEST_MAX=`expr ${TEST_MAX} - 1`
-QSUB -N "${TARGET}" -t 0-${TEST_MAX} -l walltime=0:00:00:40 -x "bash hotfoot/test.sh"
+QSUB -N "${TARGET}" -t 0-${TEST_MAX} -l walltime=0:00:00:40 \
+-o localhost:${SO} -e localhost:${SE} hotfoot/test.sh
+
 CODE = parse_output "${TARGET}"
 [ ${CODE} -ne 0 ] && exit ${CODE}
 
