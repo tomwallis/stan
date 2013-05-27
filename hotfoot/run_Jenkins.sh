@@ -3,16 +3,16 @@
 # this function looks for errors or test failures
 parse_output() {
 
-ERRORS=`grep -l -e "error:" -e "killed:" -e "Aborted" ${OUTPUT}/$1/stderr/*`
-if [ -z "$ERRORS" ]
+ERRORS=`grep -l -e "error:" -e "killed:" -e "Aborted$" -e "Terminated$" ${OUTPUT}/$1/stderr/*`
+if [ -n "$ERRORS" ]
 then
   echo "$1 has build, link, etc. errors"
   cat ${ERRORS}
   exit 10
 fi
 
-FAILURES=`grep -l -F -i "fail" ${OUTPUT}/$1/stdout/*
-if [ -z "$FAILURES" ]
+FAILURES=`grep -l -F -i "fail" ${OUTPUT}/$1/stdout/*`
+if [ -n "$FAILURES" ]
 then
   echo "$1 has test failures at runtime"
   cat ${FAILURES}
@@ -42,8 +42,9 @@ export GIT_COMMIT=`git rev-parse --short HEAD`
 export GIT_BRANCH=`git rev-parse --abbrev-ref HEAD`
 export STAN_HOME=/hpc/stats/projects/stan
 
-# prepare ccache (not working well yet)
+# prepare ccache (not working well yet because of -MM)
 export CCACHE_LOGFILE=${STAN_HOME}/.ccache/logfile.txt
+rm -f $CCACHE_LOGFILE
 export CCACHE_SLOPPINESS=include_file_mtime
 export CCACHE_DIR=${STAN_HOME}/.ccache
 mkdir -p ${CCACHE_DIR}
@@ -58,11 +59,15 @@ then
   sed -i '/-Wno/d' make/os_linux
 fi
 
+# FIXME: Eliminate the -MM option, which is unsupported by ccache
+#sed -i 's@-MM@@g' make/models
+#sed -i 's@-MM@@g' make/tests
+
 # No need to shuffle tests on Hotfoot
 git revert --no-edit --no-commit 83e1b2eed4298ba0cd2b519bce7fe25289440df7
 trap "git reset --hard HEAD" EXIT
 
-# make a directory for test output
+# make a directory for all test output
 export OUTPUT=${STAN_HOME}/hotfoot/${GIT_BRANCH}/${GIT_COMMIT}
 mkdir -p ${OUTPUT}
 trap "rm -rf hotfoot/${GIT_BRANCH}" EXIT
@@ -72,7 +77,7 @@ alias QSUB='qsub -W group_list=hpcstats -l mem=2gb -M bg2382@columbia.edu -m n -
 # in general we have to wait for the job array to finish, so
 # note the ugly while loop that follows almost all QSUB calls
 
-# Create dependencies of all tests (mostly) using submit node
+# Create ALL dependencies of ALL tests (mostly) using submit node
 CODE=1
 make clean-all > /dev/null
 if [ $? -ne 0 ]
@@ -135,7 +140,7 @@ setup ${TARGET}
 
 # test-libstan
 find src/test/ -type f -name "*_test.cpp" -print | \
-grep -v -F "src/test/models" | # exclude tests under src/test/models
+grep -v -F -e "src/test/models" -e "test/gm/compile_models" | # excludes
 sed 's@src/@@g' | sed 's@_test.cpp@@g' > ${OUTPUT}/tests.txt
 
 TARGET='test-libstan'
@@ -154,7 +159,7 @@ sed 's@.stan@@g' > ${OUTPUT}/tests.txt
 TARGET='test-gm'
 setup ${TARGET}
 
-QSUB -N "${TARGET}" -t 0-${TEST_MAX} -l walltime=0:00:04:59 \
+QSUB -N "${TARGET}" -t 0-${TEST_MAX} -l walltime=0:00:05:59 \
 -o localhost:${SO} -e localhost:${SE} hotfoot/test.sh
 while [ $(ls ${SO} | wc -l) -le ${TEST_MAX} ]; do sleep 10; done
 CODE = parse_output "${TARGET}"

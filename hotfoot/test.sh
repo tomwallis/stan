@@ -1,5 +1,4 @@
 #!/bin/sh -e
-set -x
 cd ${STAN_HOME}
 LINE=`expr ${PBS_ARRAYID} + 1`
 TEST=`sed -ne ${LINE}p ${OUTPUT}/tests.txt`
