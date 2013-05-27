@@ -49,6 +49,7 @@ export CCACHE_SLOPPINESS=include_file_mtime
 export CCACHE_DIR=${STAN_HOME}/.ccache
 mkdir -p ${CCACHE_DIR}
 export CC="ccache clang++ -Qunused-arguments"
+ccache -z
 
 cd ${STAN_HOME}
 
@@ -159,7 +160,7 @@ sed 's@.stan@@g' > ${OUTPUT}/tests.txt
 TARGET='test-gm'
 setup ${TARGET}
 
-QSUB -N "${TARGET}" -t 0-${TEST_MAX} -l walltime=0:00:05:59 \
+QSUB -N "${TARGET}" -t 0-${TEST_MAX} -l walltime=0:00:06:59 \
 -o localhost:${SO} -e localhost:${SE} hotfoot/test.sh
 while [ $(ls ${SO} | wc -l) -le ${TEST_MAX} ]; do sleep 10; done
 CODE = parse_output "${TARGET}"
@@ -172,7 +173,7 @@ sed 's@src/@@g' | sed 's@_test.cpp@@g' > ${OUTPUT}/tests.txt
 TARGET='test-models'
 setup ${TARGET}
 
-QSUB -N "${TARGET}" -t 0-${TEST_MAX} -l walltime=0:00:5:59 \
+QSUB -N "${TARGET}" -t 0-${TEST_MAX} -l walltime=0:00:6:59 \
 -o localhost:${SO} -e localhost:${SE} hotfoot/test.sh
 while [ $(ls ${SO} | wc -l) -le ${TEST_MAX} ]; do sleep 10; done
 CODE = parse_output "${TARGET}"
@@ -203,7 +204,7 @@ sed 's@src/@@g' | sed 's@_test.hpp@_00000_generated@g' > ${OUTPUT}/tests.txt
 TARGET='test-distributions'
 setup ${TARGET}
 
-QSUB -N "${TARGET}" -t 0-${TEST_MAX} -l walltime=0:00:01:59 \
+QSUB -N "${TARGET}" -t 0-${TEST_MAX} -l walltime=0:00:02:59 \
 -o localhost:${SO} -e localhost:${SE} hotfoot/test.sh
 while [ $(ls ${SO} | wc -l) -le ${TEST_MAX} ]; do sleep 10; done
 CODE = parse_output "${TARGET}"
@@ -212,9 +213,11 @@ CODE = parse_output "${TARGET}"
 # success so finish up
 echo "All tests passed on Hotfoot for branch ${GIT_BRANCH} and commit ${GIT_COMMIT}"
 echo "But the following are all the unique warnings from Stan"
-grep -r -h -F "warning:" --exclude-dir=*stdout/ ${OUTPUT} | grep ^src | sort | uniq
+grep -r -h -F "warning:" ${OUTPUT} | grep ^src | sort | uniq
 echo "The walltimes of the tests were:"
 cat ${OUTPUT}/test_timings.txt
+echo "The ccache statistics were:"
+ccache -s
 
 make clean-all > /dev/null
 exit 0
