@@ -43,10 +43,8 @@ namespace stan {
         
         double acceptProb = std::exp(H0 - this->_hamiltonian.H(this->_z));
         
-        double accept = true;
         if (acceptProb < 1 && this->_rand_uniform() > acceptProb) {
           this->_z.copy_base(z_init);
-          accept = false;
         }
         
         acceptProb = acceptProb > 1 ? 1 : acceptProb;
@@ -64,13 +62,11 @@ namespace stan {
       }
       
       void get_sampler_param_names(std::vector<std::string>& names) {
-        names.clear();
         names.push_back("stepsize__");
         names.push_back("int_time__");
       }
       
       void get_sampler_params(std::vector<double>& values) {
-        values.clear();
         values.push_back(this->_epsilon);
         values.push_back(this->_T);
       }

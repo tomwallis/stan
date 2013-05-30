@@ -1,10 +1,6 @@
 #ifndef __STAN__GM__PARSER__VAR_DECLS_GRAMMAR_DEF__HPP__
 #define __STAN__GM__PARSER__VAR_DECLS_GRAMMAR_DEF__HPP__
 
-// Suppress Clang error: multiple unsequenced
-// modifications to _pass and/or _val.
-#pragma GCC diagnostic ignored "-Wunsequenced"
-
 #include <boost/spirit/include/qi.hpp>
 // FIXME: get rid of unused include
 #include <boost/spirit/include/phoenix_core.hpp>
@@ -611,8 +607,8 @@ namespace stan {
 
       int_decl_r.name("integer declaration");
       int_decl_r 
-        %= lit("int")
-        >> no_skip[!char_("a-zA-Z0-9_")]
+        %= ( lit("int")
+             >> no_skip[!char_("a-zA-Z0-9_")] )
         > -range_brackets_int_r(_r1)
         // >> (lit(' ') | lit('\n') | lit('\t') | lit('\r'))
         > identifier_r 
@@ -621,8 +617,8 @@ namespace stan {
 
       double_decl_r.name("real declaration");
       double_decl_r 
-        %= lit("real")
-        >> no_skip[!char_("a-zA-Z0-9_")]
+        %= ( lit("real")
+             >> no_skip[!char_("a-zA-Z0-9_")] )
         > -range_brackets_double_r(_r1)
         > identifier_r
         > opt_dims_r(_r1)
