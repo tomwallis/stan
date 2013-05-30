@@ -179,27 +179,9 @@ while [ $(ls ${SO} | wc -l) -le ${TEST_MAX} ]; do sleep 10; done
 CODE = parse_output "${TARGET}"
 [ ${CODE} -ne 0 ] && exit ${CODE}
 
-#unset TEST_ARRAY
-#unset i
-#while IFS= read -r -d $'\0' file; do
-#    TEST=${file/"src/stan/prob"/"test/agrad"}
-#    TEST=${TEST/".hpp"/""}
-#    TEST_FILE=src/${TEST}_test.hpp
-#    if [ ! -e  $TEST_FILE ]
-#      then continue
-#    fi
-#    ARGS=`grep "^// Arguments:" ${TEST_FILE} | sed 's@// Arguments: @@' | wc -w`
-#    let "N_BATCHES=$[(8 ** $ARGS) / 100]"
-#    for ((j=0;j<=N_BATCHES;j++)); do
-#      NUM=`printf "_%05d_generated" ${j}`
-#      TEST_ARRAY[i++]=${TEST}${NUM}
-#    done
-#done < <(find src/stan/prob/distributions/univariate/ -type f -name "*.hpp" -print0)
-
 # test-distributions
 find src/test/agrad/distributions/ -type f -name "*_test.hpp" -print | \
 sed 's@src/@@g' | sed 's@_test.hpp@_00000_generated@g' > ${OUTPUT}/tests.txt
-# FIXME: generate rest of distribution tests above
 
 TARGET='test-distributions'
 setup ${TARGET}
@@ -207,6 +189,16 @@ setup ${TARGET}
 QSUB -N "${TARGET}" -t 0-${TEST_MAX} -l walltime=0:00:02:59 \
 -o localhost:${SO} -e localhost:${SE} hotfoot/test.sh
 while [ $(ls ${SO} | wc -l) -le ${TEST_MAX} ]; do sleep 10; done
+
+find src/test/agrad/distributions/ -type f -name "*_generated_test.cpp" -print | \
+grep -v -F "00000" | \
+sed 's@src/@@g' | sed 's@test.cpp@@g' > ${OUTPUT}/tests.txt
+
+setup ${TARGET}
+QSUB -N "${TARGET}" -t 0-${TEST_MAX} -l walltime=0:00:02:59 \
+-o localhost:${SO} -e localhost:${SE} hotfoot/test.sh
+while [ $(ls ${SO} | wc -l) -le ${TEST_MAX} ]; do sleep 10; done
+
 CODE = parse_output "${TARGET}"
 [ ${CODE} -ne 0 ] && exit ${CODE}
 
