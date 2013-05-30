@@ -7,6 +7,9 @@
 //numeric limits
 #include <stan/agrad/fwd/numeric_limits.hpp>
 
+// template metaprograms
+#include <stan/agrad/fwd/value_of.hpp>
+
 //comparison operators
 #include <stan/agrad/fwd/operator_less_than.hpp>
 #include <stan/agrad/fwd/operator_less_than_or_equal.hpp>
