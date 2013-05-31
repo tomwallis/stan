@@ -15,6 +15,7 @@
 #include <stan/io/mcmc_writer.hpp>
 
 #include <stan/mcmc/sample.hpp>
+#include <stan/mcmc/hmc/nadir_finder.hpp>
 #include <stan/mcmc/hmc/static/adapt_unit_e_static_hmc.hpp>
 #include <stan/mcmc/hmc/static/adapt_diag_e_static_hmc.hpp>
 #include <stan/mcmc/hmc/static/adapt_dense_e_static_hmc.hpp>
@@ -165,6 +166,10 @@ namespace stan {
       print_help_option(&std::cout,
                         "cov_matrix", "file",
                         "Preset an estimated covariance matrix");
+      
+      print_help_option(&std::cout,
+                        "advanced_warmup", "",
+                        "Begin warm-up with a mode finding trajectory");
       
       std::cout << std::endl;
     }
@@ -917,11 +922,18 @@ namespace stan {
       double warmDeltaT = 0;
       double sampleDeltaT = 0;
       
+      stan::mcmc::sample s(cont_params, disc_params, 0, 0);
+      
+      if (command.has_flag("advanced_warmup")) {
+        stan::mcmc::nadir_finder<Model, rng_t> sampler(model, base_rng, &std::cout, &std::cout);
+        s = sampler.transition(s);
+      }
+      
+      return 0;
+      
       if (nondiag_mass) {
         
         // Euclidean NUTS with Dense Metric
-        stan::mcmc::sample s(cont_params, disc_params, 0, 0);
-        
         typedef stan::mcmc::adapt_dense_e_nuts<Model, rng_t> a_Dm_nuts;
         a_Dm_nuts sampler(model, base_rng, num_warmup);
         sampler.seed(cont_params, disc_params);
@@ -978,8 +990,6 @@ namespace stan {
       else if (leapfrog_steps < 0 && !equal_step_sizes) {
         
         // Euclidean NUTS with Diagonal Metric
-        stan::mcmc::sample s(cont_params, disc_params, 0, 0);
-        
         typedef stan::mcmc::adapt_diag_e_nuts<Model, rng_t> a_dm_nuts;
 
         a_dm_nuts sampler(model, base_rng, num_warmup);
@@ -1036,10 +1046,7 @@ namespace stan {
         
       } else if (leapfrog_steps < 0 && equal_step_sizes) {
         
-        
         // Euclidean NUTS with Unit Metric
-        stan::mcmc::sample s(cont_params, disc_params, 0, 0);
-        
         typedef stan::mcmc::adapt_unit_e_nuts<Model, rng_t> a_um_nuts;
         a_um_nuts sampler(model, base_rng);
         sampler.seed(cont_params, disc_params);
@@ -1096,8 +1103,6 @@ namespace stan {
         
         
         // Unit Metric HMC with Static Integration Time
-        stan::mcmc::sample s(cont_params, disc_params, 0, 0);
-        
         typedef stan::mcmc::adapt_unit_e_static_hmc<Model, rng_t> a_um_hmc;
         a_um_hmc sampler(model, base_rng);
         sampler.seed(cont_params, disc_params);
