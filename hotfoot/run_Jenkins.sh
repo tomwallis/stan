@@ -60,10 +60,6 @@ then
   sed -i '/-Wno/d' make/os_linux
 fi
 
-# FIXME: Eliminate the -MM option, which is unsupported by ccache
-#sed -i 's@-MM@@g' make/models
-#sed -i 's@-MM@@g' make/tests
-
 # No need to shuffle tests on Hotfoot
 git revert --no-edit --no-commit 83e1b2eed4298ba0cd2b519bce7fe25289440df7
 trap "git reset --hard HEAD" EXIT
@@ -147,7 +143,7 @@ sed 's@src/@@g' | sed 's@_test.cpp@@g' > ${OUTPUT}/tests.txt
 TARGET='test-libstan'
 setup ${TARGET}
 
-QSUB -N "${TARGET}" -t 0-${TEST_MAX} -l walltime=0:00:01:59 \
+QSUB -N "${TARGET}" -t 0-${TEST_MAX} -l walltime=0:00:03:59 \
 -o localhost:${SO} -e localhost:${SE} hotfoot/test.sh
 while [ $(ls ${SO} | wc -l) -le ${TEST_MAX} ]; do sleep 10; done
 CODE = parse_output "${TARGET}"
@@ -160,7 +156,7 @@ sed 's@.stan@@g' > ${OUTPUT}/tests.txt
 TARGET='test-gm'
 setup ${TARGET}
 
-QSUB -N "${TARGET}" -t 0-${TEST_MAX} -l walltime=0:00:06:59 \
+QSUB -N "${TARGET}" -t 0-${TEST_MAX} -l walltime=0:00:07:59 \
 -o localhost:${SO} -e localhost:${SE} hotfoot/test.sh
 while [ $(ls ${SO} | wc -l) -le ${TEST_MAX} ]; do sleep 10; done
 CODE = parse_output "${TARGET}"
@@ -173,7 +169,7 @@ sed 's@src/@@g' | sed 's@_test.cpp@@g' > ${OUTPUT}/tests.txt
 TARGET='test-models'
 setup ${TARGET}
 
-QSUB -N "${TARGET}" -t 0-${TEST_MAX} -l walltime=0:00:6:59 \
+QSUB -N "${TARGET}" -t 0-${TEST_MAX} -l walltime=0:00:7:59 \
 -o localhost:${SO} -e localhost:${SE} hotfoot/test.sh
 while [ $(ls ${SO} | wc -l) -le ${TEST_MAX} ]; do sleep 10; done
 CODE = parse_output "${TARGET}"
@@ -195,6 +191,7 @@ grep -v -F "00000" | \
 sed 's@src/@@g' | sed 's@test.cpp@@g' > ${OUTPUT}/tests.txt
 
 setup ${TARGET}
+
 QSUB -N "${TARGET}" -t 0-${TEST_MAX} -l walltime=0:00:02:59 \
 -o localhost:${SO} -e localhost:${SE} hotfoot/test.sh
 while [ $(ls ${SO} | wc -l) -le ${TEST_MAX} ]; do sleep 10; done
