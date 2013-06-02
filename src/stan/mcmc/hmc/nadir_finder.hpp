@@ -28,7 +28,10 @@ namespace stan {
       _hamiltonian(m, this->_err_stream),
       _rand_int(rng),
       _rand_uniform(_rand_int),
-      _epsilon(1.0)
+      _epsilon(1.0),
+      _n_threshold_sigma(5),
+      _p_scale(1.0),
+      _max_iterations(1e3)
       {};
       
       void seed(const std::vector<double>& q, const std::vector<int>& r) {
@@ -38,7 +41,13 @@ namespace stan {
       
       void init_stepsize() {
         
+        this->_hamiltonian.init(this->_z);
+        this->_epsilon = 2.0 / this->_z.g.norm();
+        
         ps_point z_init(this->_z);
+        
+        int previous_direction = 0;
+        double delta = 1;
         
         while (1) {
           
@@ -56,13 +65,17 @@ namespace stan {
           
           double delta_H = fabs((H0 - h) / H0);
           
-          std::cout << "delta = " << delta_H << std::endl;
-          
-          if      (delta_H < 5e-4)
-            this->_epsilon = 2.0 * this->_epsilon;
-          else if (delta_H > 5e-3)
-            this->_epsilon = 0.5 * this->_epsilon;
-          else
+          if      (delta_H < 5e-4) {
+            
+            if (previous_direction == -1) delta /= 1.5;
+            this->_epsilon = (1 + delta) * this->_epsilon;
+            previous_direction = 1;
+            
+          } else if (delta_H > 5e-3) {
+            if (previous_direction == 1) delta /= 1.5;
+            this->_epsilon = (1.0 / (1 + delta)) * this->_epsilon;
+            previous_direction = -1;
+          } else
             break;
           
           if (this->_epsilon > 1e7)
@@ -80,8 +93,6 @@ namespace stan {
         
         this->seed(init_sample.cont_params(), init_sample.disc_params());
         
-        std::cout << init_sample.cont_params().at(0) << "\t" << init_sample.cont_params().at(1) << std::endl;
-        
         try {
           init_stepsize();
         } catch (std::runtime_error e) {
@@ -89,11 +100,11 @@ namespace stan {
           return sample(init_sample.cont_params(), init_sample.disc_params(), 0, 0);
         }
         
-        std::cout << "Stepsize = " << this->_epsilon << std::endl;
+        this->_epsilon *= 0.1;
         
         // Sample a large kinetic energy
         double sigma = sqrt( 0.5 * _z.q.size() );
-        double T_threshold = sigma * (5 + sigma);
+        double T_threshold = sigma * (_n_threshold_sigma + sigma);
         double T = 0;
         
         while (T < T_threshold) { 
@@ -105,42 +116,51 @@ namespace stan {
         this->_hamiltonian.init(this->_z);
         double V_dot = this->_z.g.dot( this->_hamiltonian.dtau_dp(this->_z) );
         if (V_dot < 0) this->_z.p *= -1;
+        
+        this->_z.p *= _p_scale;
  
         // Evolve trajectory until second apex
         double V = this->_hamiltonian.V(this->_z);
         double V_max = V;
         double V_min = V;
+        double V_old = V;
+        
         std::vector<double> q_min = this->_z.q;
+        std::vector<double> q_old = this->_z.q;
         
         V_dot = this->_z.g.dot( this->_hamiltonian.dtau_dp(this->_z) );
         double V_dot_old = V_dot;
         
+        std::cout << V << "\t" << V_dot << std::endl;
+        
         bool ignore = V_dot > 0 ? true : false;
         
-        while (1) {
+        for (int i = 0; i < _max_iterations; ++i) {
           
           this->_integrator.evolve(this->_z, this->_hamiltonian, this->_epsilon);
           
           V_dot = this->_z.g.dot( this->_hamiltonian.dtau_dp(this->_z) );
           V = this->_hamiltonian.V(this->_z);
           
-          std::cout << V << std::endl;
+          std::cout << V << "\t" << V_dot << "\t" << this->_hamiltonian.H(this->_z) << std::endl;
           
           // NaN failure
           if (V == std::numeric_limits<double>::infinity() || V != V) {
-            break;
-          }
-          // New nadir
-          else if (V_dot >= 0 & V_dot_old <= 0) {
-            
-            if (V < V_min) {
-              V_min = V;
-              q_min = this->_z.q;
+
+            if (V_old < V_min) {
+              V_min = V_old;
+              q_min = q_old;
             }
             
+            break;
           }
-          // New apex
-          else if (V_dot <= 0 & V_dot_old >= 0) {
+      
+          if (V < V_min) {
+            V_min = V;
+            q_min = this->_z.q;
+          }
+          
+          if (_sign(V_dot) != _sign(V_dot_old)) {
             
             if (V > V_max) {
               V_max = V;
@@ -149,22 +169,24 @@ namespace stan {
                 ignore = false;
                 continue;
               }
-              else {
-                break;
-              }
+              else break;
+
             }
             
           }
           
+          V_old = V;
           V_dot_old = V_dot;
           
         }
         
-        std::cout << "Vmin = " << V_min << std::endl;
-        
         return sample(q_min, init_sample.disc_params(), -V_min, 1);
         
       }
+      
+      void set_n_threshold_sigma(int n) { if (n >= 0) _n_threshold_sigma = n; }
+      void set_p_scale(double a) { _p_scale = a; }
+      void set_max_iterations(int n)  { if (n >= 0) _max_iterations = n; }
 
     protected:
       
@@ -178,6 +200,12 @@ namespace stan {
       boost::uniform_01<BaseRNG&> _rand_uniform;
       
       double _epsilon;
+      
+      int _n_threshold_sigma;
+      double _p_scale;
+      int _max_iterations;
+      
+      int _sign(double x) { return x > 0 ? 1 : -1; }
       
     };
     

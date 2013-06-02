@@ -925,8 +925,18 @@ namespace stan {
       stan::mcmc::sample s(cont_params, disc_params, 0, 0);
       
       if (command.has_flag("advanced_warmup")) {
+        
         stan::mcmc::nadir_finder<Model, rng_t> sampler(model, base_rng, &std::cout, &std::cout);
+        
+        sampler.set_n_threshold_sigma(0);
+        sampler.set_p_scale(0.0);
         s = sampler.transition(s);
+        std::cout << "\t" << s.log_prob() << std::endl;
+        
+        sampler.set_n_threshold_sigma(5);
+        sampler.set_p_scale(1.0);
+        s = sampler.transition(s);
+        std::cout << "\t" << s.log_prob() << std::endl;
       }
       
       return 0;
