@@ -1,7 +1,7 @@
 #include <stan/agrad/partials_vari.hpp>
 #include <gtest/gtest.h>
 #include <stan/agrad/agrad.hpp>
-
+#include <stan/agrad/fvar.hpp>
 
 
 TEST(AgradPartialsVari, OperandsAndPartials) {
@@ -96,4 +96,37 @@ TEST(AgradPartialsVari, OperandsAndPartials3) {
   EXPECT_FLOAT_EQ(-119.0, x1.adj());  // dy/dx1 = -119
   EXPECT_FLOAT_EQ(-171.0, x2.adj());  // dy/dx2 = -133
   EXPECT_FLOAT_EQ(-253.0, x3.adj());  // dy/dx2 = -253
+}
+
+TEST(AgradPartialsVari, OperandsAndPartials_fvar1) {
+  using stan::agrad::OperandsAndPartials;
+  using stan::agrad::fvar;
+
+  std::vector<fvar<double> > f_vec;
+  f_vec.push_back(fvar<double>(0.0, 1.0));
+  f_vec.push_back(fvar<double>(1.0, 0.0));
+  f_vec.push_back(fvar<double>(2.0, 0.0));
+  f_vec.push_back(fvar<double>(3.0, 0.0));
+
+  OperandsAndPartials<std::vector<fvar<double> > > o1(f_vec);
+  o1.d_x1[0] += 100.0;
+  o1.d_x1[1] += 200.0;
+  o1.d_x1[2] += 300.0;
+  o1.d_x1[3] += 400.0;
+
+  fvar<double> var = o1.to_var(10.0);
+  
+  EXPECT_FLOAT_EQ(10.0, var.val());
+  EXPECT_FLOAT_EQ(100.0, var.tangent());
+
+  
+}
+
+TEST(AgradPartialsVari, OperandsAndPartials_fvar2) {
+  using stan::agrad::OperandsAndPartials;
+  using stan::agrad::fvar;
+
+  fvar<double> x1(10);
+
+  OperandsAndPartials<fvar<double> > o1(x1);
 }

@@ -1,6 +1,6 @@
 #ifndef __STAN__AGRAD__PARTIALS_VARI_HPP__
 #define __STAN__AGRAD__PARTIALS_VARI_HPP__
-
+#include <iostream>
 #include <stan/meta/traits.hpp>
 #include <stan/agrad/rev/var.hpp>
 #include <stan/agrad/rev/vari.hpp>
@@ -72,7 +72,8 @@ namespace stan {
      */
     template<typename T1=double, typename T2=double, typename T3=double, 
              typename T4=double, typename T5=double, typename T6=double, 
-             typename T_return_type=typename return_type<T1,T2,T3,T4,T5,T6>::type>
+             typename T_return_type=typename return_type<T1,T2,T3,T4,T5,T6>::type,
+             bool contains_fvar=contains_fvar<T1,T2,T3,T4,T5,T6>::value>
     struct OperandsAndPartials {
       const static bool all_constant = is_constant<T_return_type>::value;
       size_t nvaris;
@@ -137,6 +138,104 @@ namespace stan {
       T_return_type
       to_var(double logp) {
         return partials_to_var<T_return_type>(logp, nvaris, all_varis, all_partials);
+      }
+    };
+
+
+
+
+    namespace {
+      template <typename T, 
+                bool contains_fvar = contains_fvar<T>::value>
+      struct tangent {
+        inline double value(VectorView<const T>& /* x */, const size_t /* index */) {
+          return 0;
+        }
+      };
+
+      template <typename T>
+      struct tangent<T,true> {
+        inline 
+        typename scalar_type<T>::type::scalar_type
+        value(VectorView<const T>& x, const size_t index) {
+          return x[index].tangent();
+        }
+      };
+    }
+
+    /**
+     * A variable implementation that stores operands and
+     * derivatives with respect to the variable. This is a 
+     * partial specialization for when it has an fvar.
+     */
+    template<typename T1, typename T2, typename T3, 
+             typename T4, typename T5, typename T6, 
+             typename T_return_type>
+    struct OperandsAndPartials<T1,T2,T3,T4,T5,T6,
+                               T_return_type,
+                               true> {
+      typedef typename T_return_type::scalar_type T_scalar_type;
+      const static bool all_constant = is_constant<T_return_type>::value;
+      size_t nx1, nx2, nx3, nx4, nx5, nx6;
+      size_t npartials;
+      T_scalar_type* all_partials;
+      
+      VectorView<T_scalar_type*, is_vector<T1>::value> d_x1;
+      VectorView<T_scalar_type*, is_vector<T2>::value> d_x2;
+      VectorView<T_scalar_type*, is_vector<T3>::value> d_x3;
+      VectorView<T_scalar_type*, is_vector<T4>::value> d_x4;
+      VectorView<T_scalar_type*, is_vector<T5>::value> d_x5;
+      VectorView<T_scalar_type*, is_vector<T6>::value> d_x6;
+      
+      VectorView<const T1> x1_vec;
+      VectorView<const T2> x2_vec;
+      VectorView<const T3> x3_vec;
+      VectorView<const T4> x4_vec;
+      VectorView<const T5> x5_vec;
+      VectorView<const T6> x6_vec;
+
+      OperandsAndPartials(const T1& x1=0, const T2& x2=0, const T3& x3=0, 
+                          const T4& x4=0, const T5& x5=0, const T6& x6=0) 
+        : nx1(!is_constant_struct<T1>::value * length(x1)),
+          nx2(!is_constant_struct<T2>::value * length(x2)),
+          nx3(!is_constant_struct<T3>::value * length(x3)),
+          nx4(!is_constant_struct<T4>::value * length(x4)),
+          nx5(!is_constant_struct<T5>::value * length(x5)),
+          nx6(!is_constant_struct<T6>::value * length(x6)),
+          npartials(nx1 + nx2 + nx3 + nx4 + nx5 + nx6),
+          all_partials((T_scalar_type*)agrad::chainable::operator new(sizeof(T_scalar_type) * npartials)),
+          d_x1(all_partials),
+          d_x2(all_partials + nx1),
+          d_x3(all_partials + nx1 + nx2),
+          d_x4(all_partials + nx1 + nx2 + nx3),
+          d_x5(all_partials + nx1 + nx2 + nx3 + nx4),
+          d_x6(all_partials + nx1 + nx2 + nx3 + nx4 + nx5),
+          x1_vec(x1),
+          x2_vec(x2),
+          x3_vec(x3),
+          x4_vec(x4),
+          x5_vec(x5),
+          x6_vec(x6) {
+      }
+
+      T_return_type
+      to_var(const T_scalar_type& logp) {
+        T_scalar_type derivative(0);
+        for (size_t n = 0; n < nx1; n++) 
+          derivative += d_x1[n] * tangent<T1>().value(x1_vec, n);
+        for (size_t n = 0; n < nx2; n++) 
+          derivative += d_x2[n] * tangent<T2>().value(x2_vec, n);
+        for (size_t n = 0; n < nx3; n++) 
+          derivative += d_x3[n] * tangent<T3>().value(x3_vec, n);
+        for (size_t n = 0; n < nx4; n++) 
+          derivative += d_x4[n] * tangent<T4>().value(x4_vec, n);
+        for (size_t n = 0; n < nx5; n++) 
+          derivative += d_x5[n] * tangent<T5>().value(x5_vec, n);
+        for (size_t n = 0; n < nx6; n++) 
+          derivative += d_x6[n] * tangent<T6>().value(x6_vec, n);
+        
+
+        return T_return_type(logp, derivative);
       }
     };
 
