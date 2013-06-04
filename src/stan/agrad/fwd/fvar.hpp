@@ -7,12 +7,17 @@ namespace stan {
 
     template <typename T>
     struct fvar {
+      typedef T scalar_type;
 
       T val_;  // value
       T d_;    // tangent (aka derivative)
 
-      T val() { return val_; }
-      T tangent() { return d_; }
+      T val() const {
+        return val_; 
+      }
+      T tangent() const { 
+        return d_;
+      }
 
       // TV and TD must be assignable to T
       template <typename TV, typename TD>
@@ -121,6 +126,10 @@ namespace stan {
         fvar<T> result(val_,d_);
         --val_;
         return result;
+      }
+
+      friend std::ostream& operator<<(std::ostream& os, const fvar<T>& v) {
+        return os << v.val() << ":" << v.tangent();
       }
     };
   }
