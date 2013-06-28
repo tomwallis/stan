@@ -62,7 +62,7 @@ namespace stan {
       // validate args (here done over var, which should be OK)
       if (!check_not_nan(function, y, "Random variable", &logp))
         return logp;
-      if (!check_finite(function, mu, "Location parameter", 
+      if (!check_not_nan(function, mu, "Location parameter", 
                         &logp))
         return logp;
       if (!check_positive(function, sigma, "Scale parameter", 
@@ -98,6 +98,10 @@ namespace stan {
         // pull out values of arguments
         const double y_dbl = value_of(y_vec[n]);
         const double mu_dbl = value_of(mu_vec[n]);
+
+        if (mu_dbl == -std::numeric_limits<double>::infinity()
+            || mu_dbl == std::numeric_limits<double>::infinity())
+          return operands_and_partials.to_var(-std::numeric_limits<double>::infinity());
       
         // reusable subexpression values
         const double y_minus_mu_over_sigma 
@@ -161,10 +165,11 @@ namespace stan {
       using stan::math::check_positive;
       using stan::math::check_finite;
       using stan::math::check_not_nan;
+      using stan::math::value_of;
       using stan::math::check_consistent_sizes;
 
+      double cdf(1.0);
 
-      typename return_type<T_y, T_loc, T_scale>::type cdf(1);
       // check if any vectors are zero length
       if (!(stan::length(y) 
             && stan::length(mu) 
@@ -173,7 +178,7 @@ namespace stan {
 
       if (!check_not_nan(function, y, "Random variable", &cdf))
         return cdf;
-      if (!check_finite(function, mu, "Location parameter", &cdf))
+      if (!check_not_nan(function, mu, "Location parameter", &cdf))
         return cdf;
       if (!check_not_nan(function, sigma, "Scale parameter", 
                          &cdf))
@@ -183,19 +188,61 @@ namespace stan {
         return cdf;
       if (!(check_consistent_sizes(function,
                                    y,mu,sigma,
-                                   "Random variable","Location parameter","Scale parameter",
+                                   "Random variable","Location parameter",
+                                   "Scale parameter",
                                    &cdf)))
         return cdf;
+
+     agrad::OperandsAndPartials<T_y, T_loc, T_scale> 
+       operands_and_partials(y, mu, sigma);
 
       VectorView<const T_y> y_vec(y);
       VectorView<const T_loc> mu_vec(mu);
       VectorView<const T_scale> sigma_vec(sigma);
       size_t N = max_size(y, mu, sigma);
-      
+      const double SQRT_TWO_OVER_PI = std::sqrt(2.0 / stan::math::pi());
+
       for (size_t n = 0; n < N; n++) {
-        cdf *= 0.5 + 0.5 * erf((y_vec[n] - mu_vec[n]) / (sigma_vec[n] * SQRT_2));
+        const double y_dbl = value_of(y_vec[n]);
+        const double mu_dbl = value_of(mu_vec[n]);
+        const double sigma_dbl = value_of(sigma_vec[n]);
+        
+        // if (sigma_dbl == std::numeric_limits<double>::infinity())
+        //   return operands_and_partials.to_var(0.5 * erfc(0.0));
+        // if (mu_dbl == std::numeric_limits<double>::infinity())
+        //   return operands_and_partials.to_var(0.5 * erfc(-std::numeric_limits<double>::infinity()));
+        // if (mu_dbl == -std::numeric_limits<double>::infinity())
+        //   return operands_and_partials.to_var(0.5 * erfc(std::numeric_limits<double>::infinity()));
+
+
+        const double scaled_diff = (y_dbl - mu_dbl) / (sigma_dbl * SQRT_2);
+        const double cdf_ = 0.5 * erfc(-scaled_diff);
+
+        // cdf
+        cdf *= cdf_;
+
+        // gradients
+        const double rep_deriv = SQRT_TWO_OVER_PI * 0.5 
+          * exp(-scaled_diff * scaled_diff) / cdf_ / sigma_dbl;
+        if (!is_constant_struct<T_y>::value)
+          operands_and_partials.d_x1[n] += rep_deriv;
+        if (!is_constant_struct<T_loc>::value)
+          operands_and_partials.d_x2[n] -= rep_deriv;
+        if (!is_constant_struct<T_scale>::value)
+          operands_and_partials.d_x3[n] -= rep_deriv * scaled_diff * SQRT_2;
       }
-      return cdf;
+
+      if (!is_constant_struct<T_y>::value)
+        for (size_t n = 0; n < stan::length(y); ++n) 
+          operands_and_partials.d_x1[n] *= cdf;
+      if (!is_constant_struct<T_loc>::value)
+        for (size_t n = 0; n < stan::length(mu); ++n) 
+          operands_and_partials.d_x2[n] *= cdf;
+      if (!is_constant_struct<T_scale>::value)
+        for (size_t n = 0; n < stan::length(sigma); ++n) 
+          operands_and_partials.d_x3[n] *= cdf;
+
+      return operands_and_partials.to_var(cdf);
     }
 
     template <class RNG>
