@@ -54,7 +54,7 @@ namespace stan {
       double logp(0.0);
       if (!check_not_nan(function, y, "Random variable", &logp))
         return logp;
-      if (!check_finite(function, nu, "Degrees of freedom parameter", &logp))
+      if (!check_not_nan(function, nu, "Degrees of freedom parameter", &logp))
         return logp;
       if (!check_positive(function, nu, "Degrees of freedom parameter", &logp))
         return logp;
@@ -71,8 +71,10 @@ namespace stan {
       VectorView<const T_dof> nu_vec(nu);
       size_t N = max_size(y, nu);
       
-      for (size_t n = 0; n < length(y); n++) 
-        if (value_of(y_vec[n]) < 0)
+      for (size_t n = 0; n < N; n++)
+        if (value_of(y_vec[n]) < 0 
+            || value_of(y_vec[n]) == std::numeric_limits<double>::infinity()
+            || value_of(nu_vec[n]) == std::numeric_limits<double>::infinity())
           return LOG_ZERO;
 
       // check if no variables are involved and prop-to

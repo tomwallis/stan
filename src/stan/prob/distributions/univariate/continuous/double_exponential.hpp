@@ -30,7 +30,7 @@ namespace stan {
         = "stan::prob::double_exponential_log(%1%)";
       
       using stan::is_constant_struct;
-      using stan::math::check_finite;
+      using stan::math::check_not_nan;
       using stan::math::check_positive;
       using stan::math::check_consistent_sizes;
       using stan::math::value_of;
@@ -46,12 +46,12 @@ namespace stan {
 
       // set up return value accumulator
       double logp(0.0);
-      if(!check_finite(function, y, "Random variable", &logp))
+      if(!check_not_nan(function, y, "Random variable", &logp))
         return logp;
-      if(!check_finite(function, mu, "Location parameter", 
+      if(!check_not_nan(function, mu, "Location parameter", 
                        &logp))
         return logp;
-      if(!check_finite(function, sigma, "Scale parameter", 
+      if(!check_not_nan(function, sigma, "Scale parameter", 
                        &logp))
         return logp;
       if(!check_positive(function, sigma, "Scale parameter", 
