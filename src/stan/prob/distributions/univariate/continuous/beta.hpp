@@ -69,7 +69,7 @@ namespace stan {
       double logp(0.0);
       
       // validate args (here done over var, which should be OK)
-      if (!check_finite(function, alpha,
+      if (!check_not_nan(function, alpha,
                         "First shape parameter",
                         &logp))
         return logp;
@@ -77,7 +77,7 @@ namespace stan {
                           "First shape parameter",
                           &logp))
         return logp;
-      if (!check_finite(function, beta, 
+      if (!check_not_nan(function, beta, 
                         "Second shape parameter",
                         &logp))
         return logp;
@@ -105,7 +105,9 @@ namespace stan {
 
       for (size_t n = 0; n < N; n++) {
         const double y_dbl = value_of(y_vec[n]);
-        if (y_dbl < 0 || y_dbl > 1)
+        if (y_dbl < 0 || y_dbl >= 1 
+            || value_of(alpha_vec[n]) == std::numeric_limits<double>::infinity() 
+            || value_of(beta_vec[n]) == std::numeric_limits<double>::infinity())
           return LOG_ZERO;
       }
 
@@ -237,13 +239,13 @@ namespace stan {
       
       double P(1.0);
         
-      if (!check_finite(function, alpha, "First shape parameter", &P))
+      if (!check_not_nan(function, alpha, "First shape parameter", &P))
         return P;
         
       if (!check_positive(function, alpha, "First shape parameter", &P))
         return P;
         
-      if (!check_finite(function, beta, "Second shape parameter", &P))
+      if (!check_not_nan(function, beta, "Second shape parameter", &P))
         return P;
         
       if (!check_positive(function, beta, "Second shape parameter", &P))
@@ -271,9 +273,13 @@ namespace stan {
 
       // Explicit return for extreme values
       // The gradients are technically ill-defined, but treated as zero
-      for (size_t i = 0; i < stan::length(y); i++) {
+      for (size_t i = 0; i < N; i++) {
         if (value_of(y_vec[i]) <= 0) 
           return operands_and_partials.to_var(0.0);
+        if (value_of(alpha_vec[i]) == std::numeric_limits<double>::infinity())
+            return operands_and_partials.to_var(0.0);
+        if (value_of(beta_vec[i]) == std::numeric_limits<double>::infinity())
+            return operands_and_partials.to_var(1.0);
       }
       
       // Compute CDF and its gradients

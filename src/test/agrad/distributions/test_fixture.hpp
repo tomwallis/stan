@@ -676,11 +676,12 @@ public:
         T7 p7 = get_repeated_params<T7>(parameters[n], 7, N_REPEAT);
         T8 p8 = get_repeated_params<T8>(parameters[n], 8, N_REPEAT);
         T9 p9 = get_repeated_params<T9>(parameters[n], 9, N_REPEAT);
-        
+      
+        int power = stan::max_size(p0,p1,p2,p3);
         var log_prob_at_lower_bound = TestClass.template log_prob
           <T0,T1,T2,T3,T4,T5,T6,T7,T8,T9>
           (p0,p1,p2,p3,p4,p5,p6,p7,p8,p9);
-        EXPECT_FLOAT_EQ(TestClass.lower_bound_vals()[i][n], log_prob_at_lower_bound.val())
+        EXPECT_FLOAT_EQ(power * TestClass.lower_bound_vals()[i][n], log_prob_at_lower_bound.val())
           << "log_prob evaluated at lower bound should equal "<< TestClass.lower_bound_vals()[i][n];
       }
 
@@ -713,10 +714,11 @@ public:
         T8 p8 = get_repeated_params<T8>(parameters[n], 8, N_REPEAT);
         T9 p9 = get_repeated_params<T9>(parameters[n], 9, N_REPEAT);
         
+        int power = stan::max_size(p0,p1,p2,p3);
         var log_prob_at_upper_bound = TestClass.template log_prob
           <T0,T1,T2,T3,T4,T5,T6,T7,T8,T9>
           (p0,p1,p2,p3,p4,p5,p6,p7,p8,p9);
-        EXPECT_FLOAT_EQ(TestClass.upper_bound_vals()[i][n], log_prob_at_upper_bound.val())
+        EXPECT_FLOAT_EQ(power * TestClass.upper_bound_vals()[i][n], log_prob_at_upper_bound.val())
           << "log_prob evaluated at upper bound should equal "<< TestClass.upper_bound_vals()[i][n];
       }
 

@@ -15,10 +15,10 @@ public:
     vector<double> param(3);
 
     param[0] = 0.2;           // y
-    param[1] = 1.0;           // alpha
+    param[1] = 2.0;           // alpha
     param[2] = 1.0;           // beta
     parameters.push_back(param);
-    log_prob.push_back(0.0); // expected log_prob
+    log_prob.push_back(-0.91629073); // expected log_prob
 
     param[0] = 0.3;           // y
     param[1] = 12.0;          // alpha
@@ -39,9 +39,6 @@ public:
     value.push_back(-1.0);
 
     index.push_back(1U);
-    value.push_back(numeric_limits<double>::infinity());
-
-    index.push_back(1U);
     value.push_back(-numeric_limits<double>::infinity());
 
     // beta
@@ -52,10 +49,69 @@ public:
     value.push_back(-1.0);
 
     index.push_back(2U);
-    value.push_back(numeric_limits<double>::infinity());
-
-    index.push_back(2U);
     value.push_back(-numeric_limits<double>::infinity());
+  }
+
+  double num_params() {
+    return 3;
+  }
+
+  std::vector<double> lower_bounds() {
+    std::vector<double> lb;
+    lb.push_back(0.0); //y
+    lb.push_back(1.0e-300); //alpha
+    lb.push_back(1.0e-300); //beta
+
+    return lb;
+  }
+
+  std::vector<std::vector<double> > lower_bound_vals() {
+    std::vector<std::vector<double> > lb;
+    std::vector<double> lb1;
+    std::vector<double> lb2;
+    std::vector<double> lb3;
+   
+    lb1.push_back(-numeric_limits<double>::infinity()); //y for valid values 1
+    lb1.push_back(-numeric_limits<double>::infinity()); //y for valid values 2
+    lb2.push_back(-689.16609); //alpha for valid values 1
+    lb2.push_back(-698.13176); //alpha for valid values 2
+    lb3.push_back(-692.16181); //beta for valid values 1
+    lb3.push_back(-703.66250); //beta for valid values 2
+
+    lb.push_back(lb1);
+    lb.push_back(lb2);
+    lb.push_back(lb3);
+
+    return lb;
+  }
+
+  std::vector<double> upper_bounds() {
+    std::vector<double> ub;
+    ub.push_back(1.0); //y
+    ub.push_back(numeric_limits<double>::infinity()); //alpha
+    ub.push_back(numeric_limits<double>::infinity()); //beta
+
+    return ub;
+  }
+
+  std::vector<std::vector<double> > upper_bound_vals() {
+    std::vector<std::vector<double> > ub;
+    std::vector<double> ub1;
+    std::vector<double> ub2;
+    std::vector<double> ub3;
+   
+    ub1.push_back(-numeric_limits<double>::infinity()); //y for valid values 1
+    ub1.push_back(-numeric_limits<double>::infinity()); //y for valid values 2
+    ub2.push_back(-numeric_limits<double>::infinity()); //alpha for valid values 1
+    ub2.push_back(-numeric_limits<double>::infinity()); //alpha for valid values 2
+    ub3.push_back(-numeric_limits<double>::infinity()); //beta for valid values 1
+    ub3.push_back(-numeric_limits<double>::infinity()); //beta for valid values 2
+
+    ub.push_back(ub1);
+    ub.push_back(ub2);
+    ub.push_back(ub3);
+
+    return ub;
   }
 
   template <typename T_y, typename T_scale1, typename T_scale2,
