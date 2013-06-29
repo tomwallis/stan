@@ -47,19 +47,21 @@ namespace stan {
         return 0.0;
 
       using stan::math::check_finite;      
+      using stan::math::check_nonnegative;
       using stan::math::check_positive;
       using stan::math::check_not_nan;
       using stan::math::value_of;
       using stan::math::check_consistent_sizes;
 
       double logp(0.0);
-      if (!check_finite(function, nu, "Degrees of freedom parameter", &logp))
+      if (!check_not_nan(function, nu, "Degrees of freedom parameter", &logp))
         return logp;
       if (!check_positive(function, nu, "Degrees of freedom parameter", &logp))
         return logp;
       if (!check_not_nan(function, y, "Random variable", &logp))
         return logp;
-
+      if (!check_nonnegative(function, y, "Random variable", &logp))
+        return logp;
       if (!(check_consistent_sizes(function,
                                    y,nu,
                                    "Random variable","Degrees of freedom parameter",
@@ -97,6 +99,8 @@ namespace stan {
       DoubleVectorView<!is_constant_struct<T_dof>::value,
         is_vector<T_dof>::value> digamma_half_nu_over_two(length(nu));
       for (size_t i = 0; i < length(nu); i++) {
+        if (value_of(nu_vec[i]) == std::numeric_limits<double>::infinity())
+          return -std::numeric_limits<double>::infinity();
         double half_nu = 0.5 * value_of(nu_vec[i]);
         if (include_summand<propto,T_dof>::value)
           lgamma_half_nu[i] = lgamma(half_nu);
@@ -156,7 +160,7 @@ namespace stan {
           
       double P(1.0);
           
-      if (!check_finite(function, nu, "Degrees of freedom parameter", &P))
+      if (!check_not_nan(function, nu, "Degrees of freedom parameter", &P))
         return P;
           
       if (!check_positive(function, nu, "Degrees of freedom parameter", &P))
@@ -183,13 +187,14 @@ namespace stan {
       std::fill(operands_and_partials.all_partials,
                 operands_and_partials.all_partials + operands_and_partials.nvaris, 0.0);
         
-      // Explicit return for extreme values
-      // The gradients are technically ill-defined, but treated as zero
-
-      for (size_t i = 0; i < stan::length(y); i++)
-        if (value_of(y_vec[i]) == 0) 
+      for (size_t i = 0; i < N; i++) {
+        if (value_of(y_vec[i]) == 0.0) 
           return operands_and_partials.to_var(0.0);
-        
+        if (value_of(y_vec[i]) == std::numeric_limits<double>::infinity() 
+            || value_of(nu_vec[i]) == std::numeric_limits<double>::infinity())
+          return operands_and_partials.to_var(1.0);
+      }
+ 
       // Compute CDF and its gradients
       using boost::math::gamma_p_derivative;
       using boost::math::gamma_q;
@@ -204,7 +209,7 @@ namespace stan {
           
       if (!is_constant_struct<T_dof>::value)  {
               
-        for (size_t i = 0; i < stan::length(nu); i++) {
+        for (size_t i = 0; i < N; i++) {
           const double nu_dbl = value_of(nu_vec[i]);
           gamma_vec[i] = tgamma(0.5 * nu_dbl);
           digamma_vec[i] = digamma(0.5 * nu_dbl);
@@ -214,13 +219,6 @@ namespace stan {
           
       // Compute vectorized CDF and gradient
       for (size_t n = 0; n < N; n++) {
-              
-        // Explicit results for extreme values
-        // The gradients are technically ill-defined, but treated as zero
-        if (value_of(y_vec[n]) == std::numeric_limits<double>::infinity()) {
-          continue;
-        }
-
         // Pull out values
         const double y_dbl = value_of(y_vec[n]);
         const double y_inv_dbl = 1.0 / y_dbl;

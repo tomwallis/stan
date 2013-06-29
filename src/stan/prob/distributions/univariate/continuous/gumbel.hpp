@@ -26,6 +26,7 @@ namespace stan {
       using stan::is_constant_struct;
       using stan::math::check_positive;
       using stan::math::check_finite;
+      using stan::math::check_nonnegative;
       using stan::math::check_not_nan;
       using stan::math::check_consistent_sizes;
       using stan::math::value_of;
@@ -43,7 +44,7 @@ namespace stan {
       // validate args (here done over var, which should be OK)
       if (!check_not_nan(function, y, "Random variable", &logp))
         return logp;
-      if (!check_finite(function, mu, "Location parameter", 
+      if (!check_not_nan(function, mu, "Location parameter", 
                         &logp))
         return logp;
       if (!check_positive(function, beta, "Scale parameter", 
@@ -79,7 +80,11 @@ namespace stan {
         // pull out values of arguments
         const double y_dbl = value_of(y_vec[n]);
         const double mu_dbl = value_of(mu_vec[n]);
-      
+
+        if (y_dbl == -std::numeric_limits<double>::infinity() 
+            || mu_dbl == std::numeric_limits<double>::infinity())
+          return -std::numeric_limits<double>::infinity();
+
         // reusable subexpression values
         const double y_minus_mu_over_beta 
           = (y_dbl - mu_dbl) * inv_beta[n];
@@ -129,7 +134,7 @@ namespace stan {
 
       if (!check_not_nan(function, y, "Random variable", &cdf))
         return cdf;
-      if (!check_finite(function, mu, "Location parameter", &cdf))
+      if (!check_not_nan(function, mu, "Location parameter", &cdf))
         return cdf;
       if (!check_not_nan(function, beta, "Scale parameter", 
                          &cdf))

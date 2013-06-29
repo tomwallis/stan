@@ -31,24 +31,56 @@ public:
       
     index.push_back(1U);
     value.push_back(0.0);
-      
-    index.push_back(1U);
-    value.push_back(numeric_limits<double>::infinity());
+  }
+  
+ double num_params() {
+    return 2;
+  }
 
+  std::vector<double> lower_bounds() {
+    std::vector<double> lb;
+    lb.push_back(0.0); //y
+    lb.push_back(1.0e-300); //nu
+
+    return lb;
   }
-  
-  bool has_lower_bound() {
-    return true;
+
+  std::vector<std::vector<double> > lower_bound_vals() {
+    std::vector<std::vector<double> > lb;
+    std::vector<double> lb1;
+    std::vector<double> lb2;
+   
+    lb1.push_back(0.0); //y for valid values 1
+    lb2.push_back(0.0); //nu for valid values 1
+
+    lb.push_back(lb1);
+    lb.push_back(lb2);
+
+    return lb;
   }
-    
-  double lower_bound() {
-    return 0.0;
+
+  std::vector<double> upper_bounds() {
+    std::vector<double> ub;
+    ub.push_back(numeric_limits<double>::infinity()); //y
+    ub.push_back(numeric_limits<double>::infinity()); //nu
+
+    return ub;
   }
-  
-  bool has_upper_bound() {
-    return false;
+
+  std::vector<std::vector<double> > upper_bound_vals() {
+    std::vector<std::vector<double> > ub;
+    std::vector<double> ub1;
+    std::vector<double> ub2;
+   
+    ub1.push_back(1.0); //y for valid values 1
+    ub2.push_back(1.0); //nu for valid values 1
+
+    ub.push_back(ub1);
+    ub.push_back(ub2);
+
+    return ub;
   }
-    
+
   template <typename T_y, typename T_dof, typename T2,
       typename T3, typename T4, typename T5, 
       typename T6, typename T7, typename T8, 

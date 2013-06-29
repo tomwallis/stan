@@ -63,13 +63,15 @@ namespace stan {
       // validate args (here done over var, which should be OK)
       if (!check_not_nan(function, y, "Random variable", &logp))
         return logp;
-      if (!check_finite(function, alpha, "Shape parameter", 
+      if (!check_positive(function, y, "Random variable", &logp))
+        return logp;
+      if (!check_not_nan(function, alpha, "Shape parameter", 
                         &logp)) 
         return logp;
-      if (!check_positive(function, alpha, "Shape parameter", 
+      if (!check_not_nan(function, alpha, "Shape parameter", 
                           &logp)) 
         return logp;
-      if (!check_finite(function, beta, "Inverse scale parameter", 
+      if (!check_not_nan(function, beta, "Inverse scale parameter", 
                         &logp)) 
         return logp;
       if (!check_positive(function, beta, "Inverse scale parameter", 
@@ -90,13 +92,16 @@ namespace stan {
       VectorView<const T_shape> alpha_vec(alpha);
       VectorView<const T_inv_scale> beta_vec(beta);
 
-      for (size_t n = 0; n < length(y); n++) {
+      size_t N = max_size(y, alpha, beta);
+
+      for (size_t n = 0; n < N; n++) {
         const double y_dbl = value_of(y_vec[n]);
-        if (y_dbl < 0)
+        if (y_dbl < 0 || y_dbl == std::numeric_limits<double>::infinity()
+            || value_of(alpha_vec[n]) == std::numeric_limits<double>::infinity()
+            || value_of(beta_vec[n]) == std::numeric_limits<double>::infinity())
           return LOG_ZERO;
       }
 
-      size_t N = max_size(y, alpha, beta);
       agrad::OperandsAndPartials<T_y, T_shape, T_inv_scale> operands_and_partials(y, alpha, beta);
 
       using boost::math::lgamma;

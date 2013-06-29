@@ -60,7 +60,7 @@ namespace stan {
       double logp(0.0);
       if(!check_not_nan(function, y, "Random variable", &logp))
         return logp;
-      if(!check_finite(function, beta, "Inverse scale parameter", &logp))
+      if(!check_not_nan(function, beta, "Inverse scale parameter", &logp))
         return logp;
       if(!check_positive(function, beta, "Inverse scale parameter", &logp))
         return logp;
@@ -80,9 +80,12 @@ namespace stan {
       DoubleVectorView<
         include_summand<propto,T_inv_scale>::value,
         is_vector<T_inv_scale>::value> log_beta(length(beta));
-      for (size_t i = 0; i < length(beta); i++)
+      for (size_t i = 0; i < length(beta); i++) {
+        if (value_of(beta_vec[i]) == std::numeric_limits<double>::infinity())
+          return -std::numeric_limits<double>::infinity();
         if (include_summand<propto,T_inv_scale>::value)
           log_beta[i] = log(value_of(beta_vec[i]));
+      }
 
       agrad::OperandsAndPartials<T_y,T_inv_scale> operands_and_partials(y, beta);
 

@@ -898,7 +898,6 @@ public:
         << cdf;
 
       if (all_scalar<T0,T1,T2,T3,T4,T5,T6,T7,T8,T9>::value) {
-        std::cout<<cdf.val()<<std::endl;
         EXPECT_FLOAT_EQ(expected_cdf[n], cdf.val())
           << "For all scalar inputs cdf should match the provided value. Failed at index: " << n;
       }
