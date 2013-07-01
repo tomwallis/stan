@@ -30,8 +30,8 @@ namespace stan {
                       const T_size1& alpha, 
                       const T_size2& beta) {
       static const char* function = "stan::prob::beta_binomial_log(%1%)";
-
-      using stan::math::check_finite;
+      
+      using stan::math::check_not_nan;
       using stan::math::check_nonnegative;
       using stan::math::check_positive;
       using stan::math::value_of;
@@ -49,14 +49,14 @@ namespace stan {
       if (!check_nonnegative(function, N, "Population size parameter",
                              &logp))
         return logp;
-      if (!check_finite(function, alpha, "First prior sample size parameter",
-                        &logp))
+      if (!check_not_nan(function, alpha, "First prior sample size parameter",
+                         &logp))
         return logp;
       if (!check_positive(function, alpha, "First prior sample size parameter", 
                           &logp))
         return logp;
-      if (!check_finite(function, beta, "Second prior sample size parameter",
-                        &logp))
+      if (!check_not_nan(function, beta, "Second prior sample size parameter",
+                         &logp))
         return logp;
       if (!check_positive(function, beta, "Second prior sample size parameter", 
                           &logp))
@@ -81,7 +81,9 @@ namespace stan {
       size_t size = max_size(n, N, alpha, beta);
       
       for (size_t i = 0; i < size; i++) {
-        if (n_vec[i] < 0 || n_vec[i] > N_vec[i])
+        if (n_vec[i] < 0 || n_vec[i] > N_vec[i]
+            || value_of(alpha_vec[i]) == std::numeric_limits<double>::infinity()
+            || value_of(beta_vec[i]) == std::numeric_limits<double>::infinity())
           return LOG_ZERO;
       }
       
@@ -113,7 +115,7 @@ for (size_t i = 0; i < max_size(alpha,beta); i++)
   if (include_summand<propto,T_size1,T_size2>::value)
     lbeta_denominator[i] = lbeta(value_of(alpha_vec[i]), 
                                  value_of(beta_vec[i]));
-      
+    
 DoubleVectorView<!is_constant_struct<T_size1>::value,
                  is_vector<T_n>::value || is_vector<T_size1>::value> 
   digamma_n_plus_alpha(max_size(n,alpha));
@@ -121,7 +123,7 @@ DoubleVectorView<!is_constant_struct<T_size1>::value,
    if (!is_constant_struct<T_size1>::value)
      digamma_n_plus_alpha[i] 
        = digamma(n_vec[i] + value_of(alpha_vec[i]));
-
+  
  DoubleVectorView<!is_constant_struct<T_size1>::value
                   || !is_constant_struct<T_size2>::value,
                   is_vector<T_N>::value 
@@ -133,7 +135,7 @@ DoubleVectorView<!is_constant_struct<T_size1>::value,
           || !is_constant_struct<T_size2>::value)
         digamma_N_plus_alpha_plus_beta[i] 
           = digamma(N_vec[i] + value_of(alpha_vec[i]) + value_of(beta_vec[i]));
-
+    
     DoubleVectorView<!is_constant_struct<T_size1>::value
                      || !is_constant_struct<T_size2>::value,
                      is_vector<T_size1>::value
@@ -151,14 +153,14 @@ DoubleVectorView<!is_constant_struct<T_size1>::value,
 for (size_t i = 0; i < length(alpha); i++)
   if (!is_constant_struct<T_size1>::value)
     digamma_alpha[i] = digamma(value_of(alpha_vec[i]));
-
+    
 DoubleVectorView<!is_constant_struct<T_size2>::value, 
                  is_vector<T_size2>::value>
   digamma_beta(length(beta));
  for (size_t i = 0; i < length(beta); i++)
    if (!is_constant_struct<T_size2>::value)
      digamma_beta[i] = digamma(value_of(beta_vec[i]));
-
+    
  agrad::OperandsAndPartials<T_n,T_N,T_size1,T_size2> 
    operands_and_partials(n,N,alpha,beta);
  for (size_t i = 0; i < size; i++) {
@@ -183,7 +185,7 @@ DoubleVectorView<!is_constant_struct<T_size2>::value,
  }
  return operands_and_partials.to_var(logp);
     }
-
+    
     template <typename T_n,
               typename T_N,
               typename T_size1,
@@ -203,7 +205,7 @@ DoubleVectorView<!is_constant_struct<T_size2>::value,
           
       static const char* function = "stan::prob::beta_binomial_cdf(%1%)";
           
-      using stan::math::check_finite;
+      using stan::math::check_not_nan;
       using stan::math::check_nonnegative;
       using stan::math::check_positive;
       using stan::math::value_of;
@@ -222,16 +224,16 @@ DoubleVectorView<!is_constant_struct<T_size2>::value,
                              &P))
         return P;
           
-      if (!check_finite(function, alpha, "First prior sample size parameter",
-                        &P))
+      if (!check_not_nan(function, alpha, "First prior sample size parameter",
+                         &P))
         return P;
           
       if (!check_positive(function, alpha, "First prior sample size parameter", 
                           &P))
         return P;
           
-      if (!check_finite(function, beta, "Second prior sample size parameter",
-                        &P))
+      if (!check_not_nan(function, beta, "Second prior sample size parameter",
+                         &P))
         return P;
           
       if (!check_positive(function, beta, "Second prior sample size parameter", 
@@ -268,9 +270,12 @@ DoubleVectorView<!is_constant_struct<T_size2>::value,
           
       // Explicit return for extreme values
       // The gradients are technically ill-defined, but treated as zero
-      for (size_t i = 0; i < stan::length(n); i++) {
-        if (value_of(n_vec[i]) <= 0) 
+      for (size_t i = 0; i < size; i++) {
+        if (value_of(n_vec[i]) <= 0
+            || value_of(alpha_vec[i]) == std::numeric_limits<double>::infinity()) 
           return operands_and_partials.to_var(0.0);
+        if (value_of(beta_vec[i]) == std::numeric_limits<double>::infinity())
+          return operands_and_partials.to_var(1.0);
       }
           
       for (size_t i = 0; i < size; i++) {

@@ -39,12 +39,68 @@ public:
 
   }
   
-  bool has_lower_bound() {
-    return false;
+  double num_params() {
+    return 4;
   }
-    
-  bool has_upper_bound() {
-    return false;
+
+  std::vector<double> lower_bounds() {
+    std::vector<double> lb;
+    lb.push_back(0.0); //n
+    lb.push_back(0.0); //N
+    lb.push_back(1.0e-300); //alpha
+    lb.push_back(1.0e-300); //beta
+
+    return lb;
+  }
+
+  std::vector<std::vector<double> > lower_bound_vals() {
+    std::vector<std::vector<double> > lb;
+    std::vector<double> lb1;
+    std::vector<double> lb2;
+    std::vector<double> lb3;
+    std::vector<double> lb4;
+   
+    lb1.push_back(0.0); //n for valid values 1
+    lb2.push_back(1.0); //N for valid values 1
+    lb3.push_back(1.0); //alpha for valid values 1
+    lb4.push_back(1.0); //beta for valid values 1
+
+    lb.push_back(lb1);
+    lb.push_back(lb2);
+    lb.push_back(lb3);
+    lb.push_back(lb4);
+
+    return lb;
+  }
+
+  std::vector<double> upper_bounds() {
+    std::vector<double> ub;
+    ub.push_back(numeric_limits<int>::infinity()); //n
+    ub.push_back(numeric_limits<int>::infinity()); //N
+    ub.push_back(numeric_limits<double>::infinity()); //alpha
+    ub.push_back(numeric_limits<double>::infinity()); //beta
+
+    return ub;
+  }
+
+  std::vector<std::vector<double> > upper_bound_vals() {
+    std::vector<std::vector<double> > ub;
+    std::vector<double> ub1;
+    std::vector<double> ub2;
+    std::vector<double> ub3;
+    std::vector<double> ub4;
+   
+    ub1.push_back(0.0); //n for valid values 1
+    ub2.push_back(1.0); //N for valid values 1
+    ub3.push_back(0.0); //alpha for valid values 1
+    ub4.push_back(1.0); //beta for valid values 1
+
+    ub.push_back(ub1);
+    ub.push_back(ub2);
+    ub.push_back(ub3);
+    ub.push_back(ub4);
+
+    return ub;
   }
 
   template <typename T_n, typename T_N, typename T_size1, typename T_size2, 
