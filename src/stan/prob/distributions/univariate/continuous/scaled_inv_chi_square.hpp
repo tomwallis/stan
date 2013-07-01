@@ -58,13 +58,15 @@ namespace stan {
       double logp(0.0);
       if (!check_not_nan(function, y, "Random variable", &logp))
         return logp;
-      if (!check_finite(function, nu, "Degrees of freedom parameter",
+    if (!check_positive(function, y, "Random variable", &logp))
+        return logp;
+      if (!check_not_nan(function, nu, "Degrees of freedom parameter",
                         &logp))
         return logp;
       if (!check_positive(function, nu, "Degrees of freedom parameter", 
                           &logp))
         return logp;
-      if (!check_finite(function, s, "Scale parameter", &logp))
+      if (!check_not_nan(function, s, "Scale parameter", &logp))
         return logp;
       if (!check_positive(function, s, "Scale parameter", &logp))
         return logp;
@@ -86,7 +88,8 @@ namespace stan {
       size_t N = max_size(y, nu, s);
 
       for (size_t n = 0; n < N; n++) {
-        if (value_of(y_vec[n]) <= 0)
+        if (value_of(nu_vec[n]) == std::numeric_limits<double>::infinity() 
+            || value_of(s_vec[n]) == std::numeric_limits<double>::infinity())
           return LOG_ZERO;
       }
 
@@ -212,10 +215,10 @@ namespace stan {
       if (!check_not_nan(function, y, "Random variable", &P))
         return P;
           
-      if (!check_nonnegative(function, y, "Random variable", &P))
+      if (!check_positive(function, y, "Random variable", &P))
         return P;
           
-      if (!check_finite(function, nu, "Degrees of freedom parameter", 
+      if (!check_not_nan(function, nu, "Degrees of freedom parameter", 
                         &P))
         return P;
           
@@ -223,7 +226,7 @@ namespace stan {
                           &P))
         return P;
           
-      if (!check_finite(function, s, "Scale parameter", &P))
+      if (!check_not_nan(function, s, "Scale parameter", &P))
         return P;
           
       if (!check_positive(function, s, "Scale parameter", &P))
@@ -235,7 +238,7 @@ namespace stan {
                                    "Scale parameter",
                                    &P)))
         return P;
-          
+
       // Wrap arguments in vectors
       VectorView<const T_y> y_vec(y);
       VectorView<const T_dof> nu_vec(nu);
@@ -248,15 +251,21 @@ namespace stan {
       std::fill(operands_and_partials.all_partials,
                 operands_and_partials.all_partials 
                 + operands_and_partials.nvaris, 0.0);
-          
+
       // Explicit return for extreme values
       // The gradients are technically ill-defined, but treated as zero
           
-      for (size_t i = 0; i < stan::length(y); i++) {
-        if (value_of(y_vec[i]) == 0) 
+      for (size_t i = 0; i < N; i++) {
+        if (value_of(y_vec[i]) <= 1.0e-100
+            || value_of(nu_vec[i]) <= 1.0e-100
+            || value_of(nu_vec[i]) == std::numeric_limits<double>::infinity()
+            || value_of(s_vec[i]) == std::numeric_limits<double>::infinity()) 
           return operands_and_partials.to_var(0.0);
+        if (value_of(s_vec[i]) <= 1.0e-100
+            || value_of(y_vec[i]) == std::numeric_limits<double>::infinity())
+          return operands_and_partials.to_var(1.0);
       }
-          
+
       // Compute CDF and its gradients
       using boost::math::gamma_p_derivative;
       using boost::math::gamma_q;
@@ -268,7 +277,7 @@ namespace stan {
                        is_vector<T_dof>::value> gamma_vec(stan::length(nu));
       DoubleVectorView<!is_constant_struct<T_dof>::value,
                        is_vector<T_dof>::value> digamma_vec(stan::length(nu));
-          
+
       if (!is_constant_struct<T_dof>::value) {
               
         for (size_t i = 0; i < stan::length(nu); i++) {
@@ -278,15 +287,9 @@ namespace stan {
         }
               
       }
-          
+
       // Compute vectorized CDF and gradient
       for (size_t n = 0; n < N; n++) {
-              
-        // Explicit results for extreme values
-        // The gradients are technically ill-defined, but treated as zero
-        if (value_of(y_vec[n]) == std::numeric_limits<double>::infinity()) {
-          continue;
-        }
               
         // Pull out values
         const double y_dbl = value_of(y_vec[n]);
@@ -301,12 +304,12 @@ namespace stan {
         const double Pn = gamma_q(half_nu_dbl, half_nu_s2_overx_dbl);
                     
         P *= Pn;
-              
+
         if (!is_constant_struct<T_y>::value)
           operands_and_partials.d_x1[n] 
             += half_nu_s2_overx_dbl * y_inv_dbl 
             * gamma_p_derivative(half_nu_dbl, half_nu_s2_overx_dbl) / Pn;
-                    
+
         if (!is_constant_struct<T_dof>::value)
           operands_and_partials.d_x2[n] 
             += (0.5 * stan::math::gradRegIncGamma(half_nu_dbl,
@@ -315,12 +318,12 @@ namespace stan {
                 - half_s2_overx_dbl 
                 * gamma_p_derivative(half_nu_dbl, half_nu_s2_overx_dbl) )
             / Pn;
-                    
+
         if (!is_constant_struct<T_scale>::value)
           operands_and_partials.d_x3[n] 
             += - 2.0 * half_nu_dbl * s_dbl * y_inv_dbl 
             * gamma_p_derivative(half_nu_dbl, half_nu_s2_overx_dbl) / Pn;
-              
+
       }
           
       if (!is_constant_struct<T_y>::value)

@@ -41,13 +41,15 @@ namespace stan {
       // validate args (here done over var, which should be OK)
       if (!check_not_nan(function, y, "Random variable", &logp))
         return logp;
-      if (!check_finite(function, y_min, "Scale parameter",
+      if (!check_positive(function, y, "Random variable", &logp))
+        return logp;
+      if (!check_not_nan(function, y_min, "Scale parameter",
                         &logp))
         return logp;
       if (!check_positive(function, y_min, "Scale parameter", 
                           &logp))
         return logp;
-      if (!check_finite(function, alpha, "Shape parameter", 
+      if (!check_not_nan(function, alpha, "Shape parameter", 
                         &logp))
         return logp;
       if (!check_positive(function, alpha, "Shape parameter", 
@@ -69,7 +71,8 @@ namespace stan {
       size_t N = max_size(y, y_min, alpha);
 
       for (size_t n = 0; n < N; n++) {
-        if (y_vec[n] < y_min_vec[n])
+        if (y_vec[n] < y_min_vec[n]
+            || value_of(alpha_vec[n]) == std::numeric_limits<double>::infinity())
           return LOG_ZERO;
       }
 
@@ -133,7 +136,6 @@ namespace stan {
     typename return_type<T_y, T_scale, T_shape>::type
     pareto_cdf(const T_y& y, const T_scale& y_min, const T_shape& alpha) {
           
-      // Check sizes
       // Size checks
       if ( !( stan::length(y) && stan::length(y_min) && stan::length(alpha) ) ) 
         return 1.0;
@@ -144,7 +146,6 @@ namespace stan {
       using stan::math::check_finite;
       using stan::math::check_positive;
       using stan::math::check_not_nan;
-      using stan::math::check_greater_or_equal;
       using stan::math::check_consistent_sizes;
       using stan::math::check_nonnegative;
           
@@ -157,14 +158,14 @@ namespace stan {
           
       if (!check_nonnegative(function, y, "Random variable", &P))
         return P;
-          
-      if (!check_finite(function, y_min, "Scale parameter", &P))
+
+      if (!check_not_nan(function, y_min, "Scale parameter", &P))
         return P;
           
       if (!check_positive(function, y_min, "Scale parameter", &P))
         return P;
           
-      if (!check_finite(function, alpha, "Shape parameter", &P))
+      if (!check_not_nan(function, alpha, "Shape parameter", &P))
         return P;
           
       if (!check_positive(function, alpha, "Shape parameter", &P))
