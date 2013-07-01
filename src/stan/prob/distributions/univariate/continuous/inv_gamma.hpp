@@ -57,13 +57,13 @@ namespace stan {
 
       if (!check_not_nan(function, y, "Random variable", &logp))
         return logp;
-      if (!check_finite(function, alpha, "Shape parameter", 
+      if (!check_not_nan(function, alpha, "Shape parameter", 
                         &logp)) 
         return logp;
       if (!check_positive(function, alpha, "Shape parameter",
                           &logp)) 
         return logp;
-      if (!check_finite(function, beta, "Scale parameter",
+      if (!check_not_nan(function, beta, "Scale parameter",
                         &logp)) 
         return logp;
       if (!check_positive(function, beta, "Scale parameter", 
@@ -85,13 +85,16 @@ namespace stan {
       VectorView<const T_shape> alpha_vec(alpha);
       VectorView<const T_scale> beta_vec(beta);
 
-      for (size_t n = 0; n < length(y); n++) {
+      size_t N = max_size(y, alpha, beta);
+
+      for (size_t n = 0; n < N; n++) {
         const double y_dbl = value_of(y_vec[n]);
-        if (y_dbl <= 0)
+        if (y_dbl <= 0 
+            || value_of(alpha_vec[n]) == std::numeric_limits<double>::infinity()
+            || value_of(beta_vec[n]) == std::numeric_limits<double>::infinity())
           return LOG_ZERO;
       }
 
-      size_t N = max_size(y, alpha, beta);
       agrad::OperandsAndPartials<T_y, T_shape, T_scale> 
         operands_and_partials(y, alpha, beta);
       
@@ -207,13 +210,13 @@ namespace stan {
           
       double P(1.0);
           
-      if (!check_finite(function, alpha, "Shape parameter", &P)) 
+      if (!check_not_nan(function, alpha, "Shape parameter", &P)) 
         return P;
           
       if (!check_positive(function, alpha, "Shape parameter", &P)) 
         return P;
           
-      if (!check_finite(function, beta, "Scale parameter", &P)) 
+      if (!check_not_nan(function, beta, "Scale parameter", &P)) 
         return P;
           
       if (!check_positive(function, beta, "Scale parameter", &P)) 
@@ -247,9 +250,12 @@ namespace stan {
       // Explicit return for extreme values
       // The gradients are technically ill-defined, but treated as zero
           
-      for (size_t i = 0; i < stan::length(y); i++) {
-        if (value_of(y_vec[i]) == 0) 
+      for (size_t i = 0; i < N; i++) {
+        if (value_of(y_vec[i]) == 0
+            || value_of(beta_vec[i]) == std::numeric_limits<double>::infinity()) 
           return operands_and_partials.to_var(0.0);
+        if (value_of(alpha_vec[i]) == std::numeric_limits<double>::infinity())
+          return operands_and_partials.to_var(1.0);
       }
           
       // Compute CDF and its gradients

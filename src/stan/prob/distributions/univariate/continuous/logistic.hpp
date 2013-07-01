@@ -23,7 +23,7 @@ namespace stan {
       static const char* function = "stan::prob::logistic_log(%1%)";
       
       using stan::math::check_positive;
-      using stan::math::check_finite;
+      using stan::math::check_not_nan;
       using stan::math::check_consistent_sizes;
       using stan::math::value_of;
       using stan::prob::include_summand;
@@ -39,12 +39,12 @@ namespace stan {
       double logp(0.0);
         
       // validate args (here done over var, which should be OK)      
-      if (!check_finite(function, y, "Random variable", &logp))
+      if (!check_not_nan(function, y, "Random variable", &logp))
         return logp;
-      if (!check_finite(function, mu, "Location parameter",
+      if (!check_not_nan(function, mu, "Location parameter",
                         &logp))
         return logp;
-      if (!check_finite(function, sigma, "Scale parameter", &logp))
+      if (!check_not_nan(function, sigma, "Scale parameter", &logp))
         return logp;
       if (!check_positive(function, sigma, "Scale parameter",
                           &logp))
@@ -67,6 +67,12 @@ namespace stan {
       VectorView<const T_loc> mu_vec(mu);
       VectorView<const T_scale> sigma_vec(sigma);
       size_t N = max_size(y, mu, sigma);
+
+      for (size_t i = 0; i < N; i++)
+        if (value_of(y_vec[i]) == std::numeric_limits<double>::infinity()
+            || value_of(y_vec[i]) == -std::numeric_limits<double>::infinity()
+            || value_of(mu_vec[i]) == std::numeric_limits<double>::infinity())
+          return LOG_ZERO;
 
       DoubleVectorView<true,is_vector<T_scale>::value> inv_sigma(length(sigma));
       DoubleVectorView<include_summand<propto,T_scale>::value,is_vector<T_scale>::value> log_sigma(length(sigma));
@@ -151,10 +157,10 @@ namespace stan {
       if (!check_not_nan(function, y, "Random variable", &P))
         return P;
           
-      if (!check_finite(function, mu, "Location parameter", &P))
+      if (!check_not_nan(function, mu, "Location parameter", &P))
         return P;
           
-      if (!check_finite(function, sigma, "Scale parameter", &P))
+      if (!check_not_nan(function, sigma, "Scale parameter", &P))
         return P;
           
       if (!check_positive(function, sigma, "Scale parameter", &P))
