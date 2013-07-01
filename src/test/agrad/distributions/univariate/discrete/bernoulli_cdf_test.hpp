@@ -34,12 +34,56 @@ public:
     value.push_back(1+1e-4);
   }
   
-  bool has_lower_bound() {
-    return false;
+  double num_params() {
+    return 2;
   }
-    
-  bool has_upper_bound() {
-    return false;
+
+  std::vector<double> lower_bounds() {
+    std::vector<double> lb;
+    lb.push_back(0); //n
+    lb.push_back(0.0); //theta
+
+    return lb;
+  }
+
+  std::vector<std::vector<double> > lower_bound_vals() {
+    std::vector<std::vector<double> > lb;
+    std::vector<double> lb1;
+    std::vector<double> lb2;
+   
+    lb1.push_back(0.25); //n for valid values 1
+    lb1.push_back(0.25); //n for valid values 2
+    lb2.push_back(1.0); //theta for valid values 1
+    lb2.push_back(1.0); //theta for valid values 2
+
+    lb.push_back(lb1);
+    lb.push_back(lb2);
+
+    return lb;
+  }
+
+  std::vector<double> upper_bounds() {
+    std::vector<double> ub;
+    ub.push_back(1); //n
+    ub.push_back(1.0); //theta
+
+    return ub;
+  }
+
+  std::vector<std::vector<double> > upper_bound_vals() {
+    std::vector<std::vector<double> > ub;
+    std::vector<double> ub1;
+    std::vector<double> ub2;
+   
+    ub1.push_back(1.0); //n for valid values 1
+    ub1.push_back(1.0); //n for valid values 2
+    ub2.push_back(0.0); //theta for valid values 1
+    ub2.push_back(1.0); //theta for valid values 2
+
+    ub.push_back(ub1);
+    ub.push_back(ub2);
+
+    return ub;
   }
 
   template <typename T_n, typename T_prob, typename T2,
