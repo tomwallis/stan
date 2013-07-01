@@ -45,11 +45,6 @@ public:
     // y
     
     // mu
-    index.push_back(1U);
-    value.push_back(-numeric_limits<double>::infinity());
-
-    index.push_back(1U);
-    value.push_back(numeric_limits<double>::infinity());
 
     // sigma
     index.push_back(2U);
@@ -70,9 +65,95 @@ public:
 
     index.push_back(3U);
     value.push_back(0.0);
+  }
 
-    index.push_back(3U);
-    value.push_back(numeric_limits<double>::infinity());
+  double num_params() {
+    return 4;
+  }
+
+  std::vector<double> lower_bounds() {
+    std::vector<double> lb;
+    lb.push_back(-numeric_limits<double>::infinity()); //y
+    lb.push_back(-numeric_limits<double>::infinity()); //mu
+    lb.push_back(1.0e-300); //sigma
+    lb.push_back(1.0e-300); //lambda
+
+
+    return lb;
+  }
+
+  std::vector<std::vector<double> > lower_bound_vals() {
+    std::vector<std::vector<double> > lb;
+    std::vector<double> lb1;
+    std::vector<double> lb2;
+    std::vector<double> lb3;
+    std::vector<double> lb4;
+   
+    lb1.push_back(-numeric_limits<double>::infinity()); //y for valid values 1
+    lb1.push_back(-numeric_limits<double>::infinity()); //y for valid values 2
+    lb1.push_back(-numeric_limits<double>::infinity()); //y for valid values 3
+    lb1.push_back(-numeric_limits<double>::infinity()); //y for valid values 4
+    lb2.push_back(-numeric_limits<double>::infinity()); //mu for valid values 1
+    lb2.push_back(-numeric_limits<double>::infinity()); //mu for valid values 2
+    lb2.push_back(-numeric_limits<double>::infinity()); //mu for valid values 3
+    lb2.push_back(-numeric_limits<double>::infinity()); //mu for valid values 4
+    lb3.push_back(-0.6931471); //sigma for valid values 1
+    lb3.push_back(-1.0); //sigma for valid values 2
+    lb3.push_back(-numeric_limits<double>::infinity()); //sigma for valid values 3
+    lb3.push_back(-numeric_limits<double>::infinity()); //sigma for valid values 4
+    lb4.push_back(-691.46866); //lambda valid values 1
+    lb4.push_back(-690.94823); //lambda valid values 2
+    lb4.push_back(-694.55866); //lambda valid values 3
+    lb4.push_back(-692.260); //lambda valid values 4
+
+    lb.push_back(lb1);
+    lb.push_back(lb2);
+    lb.push_back(lb3);
+    lb.push_back(lb4);
+
+    return lb;
+  }
+
+  std::vector<double> upper_bounds() {
+    std::vector<double> ub;
+    ub.push_back(numeric_limits<double>::infinity()); //y
+    ub.push_back(numeric_limits<double>::infinity()); //mu
+    ub.push_back(numeric_limits<double>::infinity()); //sigma
+    ub.push_back(numeric_limits<double>::infinity()); //lambda
+
+    return ub;
+  }
+
+  std::vector<std::vector<double> > upper_bound_vals() {
+    std::vector<std::vector<double> > ub;
+    std::vector<double> ub1;
+    std::vector<double> ub2;
+    std::vector<double> ub3;
+    std::vector<double> ub4;
+   
+    ub1.push_back(-numeric_limits<double>::infinity()); //y for valid values 1
+    ub1.push_back(-numeric_limits<double>::infinity()); //y for valid values 2
+    ub1.push_back(-numeric_limits<double>::infinity()); //y for valid values 3
+    ub1.push_back(-numeric_limits<double>::infinity()); //y for valid values 4
+    ub2.push_back(-numeric_limits<double>::infinity()); //mu for valid values 1
+    ub2.push_back(-numeric_limits<double>::infinity()); //mu for valid values 2
+    ub2.push_back(-numeric_limits<double>::infinity()); //mu for valid values 3
+    ub2.push_back(-numeric_limits<double>::infinity()); //mu for valid values 4
+    ub3.push_back(-numeric_limits<double>::infinity()); //sigma for valid values 1
+    ub3.push_back(-numeric_limits<double>::infinity()); //sigma for valid values 2
+    ub3.push_back(-numeric_limits<double>::infinity()); //sigma for valid values 3
+    ub3.push_back(-numeric_limits<double>::infinity()); //sigma for valid values 4
+    ub4.push_back(-numeric_limits<double>::infinity()); //lambda valid values 1
+    ub4.push_back(-numeric_limits<double>::infinity()); //lambda valid values 2
+    ub4.push_back(-numeric_limits<double>::infinity()); //lambda valid values 3
+    ub4.push_back(-numeric_limits<double>::infinity()); //lambda valid values 4
+
+    ub.push_back(ub1);
+    ub.push_back(ub2);
+    ub.push_back(ub3);
+    ub.push_back(ub4);
+
+    return ub;
   }
 
   template <typename T_y, typename T_loc, typename T_scale,

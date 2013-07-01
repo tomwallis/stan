@@ -47,10 +47,10 @@ namespace stan {
       // validate args (here done over var, which should be OK)
       if (!check_not_nan(function, y, "Random variable", &logp))
         return logp;
-      if (!check_finite(function, mu, "Location parameter", 
+      if (!check_not_nan(function, mu, "Location parameter", 
                         &logp))
         return logp;
-      if (!check_finite(function, alpha, "Shape parameter", 
+      if (!check_not_nan(function, alpha, "Shape parameter", 
                         &logp))
         return logp;
       if (!check_positive(function, sigma, "Scale parameter", 
@@ -162,15 +162,13 @@ namespace stan {
 
       if (!check_not_nan(function, y, "Random variable", &cdf))
         return cdf;
-      if (!check_finite(function, mu, "Location parameter", &cdf))
+      if (!check_not_nan(function, mu, "Location parameter", &cdf))
         return cdf;
       if (!check_not_nan(function, sigma, "Scale parameter", 
                          &cdf))
         return cdf;
       if (!check_positive(function, sigma, "Scale parameter", 
                           &cdf))
-        return cdf;
-      if (!check_finite(function, alpha, "Shape parameter", &cdf))
         return cdf;
       if (!check_not_nan(function, alpha, "Shape parameter", 
                          &cdf))

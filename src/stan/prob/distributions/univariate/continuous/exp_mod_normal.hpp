@@ -46,10 +46,10 @@ namespace stan {
       // validate args (here done over var, which should be OK)
       if (!check_not_nan(function, y, "Random variable", &logp))
         return logp;
-      if (!check_finite(function, mu, "Location parameter", 
+      if (!check_not_nan(function, mu, "Location parameter", 
                         &logp))
         return logp;
-      if (!check_finite(function, lambda, "Inv_scale parameter", 
+      if (!check_not_nan(function, lambda, "Inv_scale parameter", 
                         &logp))
         return logp;
       if (!check_positive(function, lambda, "Inv_scale parameter", 
@@ -85,6 +85,12 @@ namespace stan {
         const double mu_dbl = value_of(mu_vec[n]);
         const double sigma_dbl = value_of(sigma_vec[n]);
         const double lambda_dbl = value_of(lambda_vec[n]);
+
+        if (y_dbl == -std::numeric_limits<double>::infinity() 
+            || mu_dbl == std::numeric_limits<double>::infinity()
+            || lambda_dbl == std::numeric_limits<double>::infinity()
+            || sigma_dbl == std::numeric_limits<double>::infinity())
+          return LOG_ZERO;
 
         const double pi_dbl = boost::math::constants::pi<double>();
 
@@ -160,17 +166,15 @@ namespace stan {
 
       if (!check_not_nan(function, y, "Random variable", &cdf))
         return cdf;
-      if (!check_finite(function, mu, "Location parameter", &cdf))
+      if (!check_not_nan(function, mu, "Location parameter", &cdf))
         return cdf;
       if (!check_not_nan(function, sigma, "Scale parameter", 
                          &cdf))
-        return cdf;      
-      if (!check_finite(function, sigma, "Scale parameter", &cdf))
-        return cdf;
+        return cdf;     
       if (!check_positive(function, sigma, "Scale parameter", 
                           &cdf))
         return cdf;
-      if (!check_finite(function, lambda, "Inv_scale parameter", &cdf))
+      if (!check_not_nan(function, lambda, "Inv_scale parameter", &cdf))
         return cdf;
       if (!check_positive(function, lambda, "Inv_scale parameter", 
                           &cdf))

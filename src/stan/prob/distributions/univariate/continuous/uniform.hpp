@@ -57,11 +57,11 @@ namespace stan {
 
       // set up return value accumulator
       double logp(0.0);
-      if(!check_not_nan(function, y, "Random variable", &logp))
+      if (!check_not_nan(function, y, "Random variable", &logp))
         return logp;
-      if (!check_finite(function, alpha, "Lower bound parameter", &logp))
+      if (!check_not_nan(function, alpha, "Lower bound parameter", &logp))
         return logp;
-      if (!check_finite(function, beta, "Upper bound parameter", &logp))
+      if (!check_not_nan(function, beta, "Upper bound parameter", &logp))
         return logp;
       if (!check_greater(function, beta, alpha, "Upper bound parameter",
                          &logp))

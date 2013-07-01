@@ -66,16 +66,16 @@ namespace stan {
       // validate args (here done over var, which should be OK)
       if (!check_not_nan(function, y, "Random variable", &logp))
         return logp;
-      if(!check_finite(function, nu, "Degrees of freedom parameter", 
+      if(!check_not_nan(function, nu, "Degrees of freedom parameter", 
                        &logp))
         return logp;
       if(!check_positive(function, nu, "Degrees of freedom parameter", 
                          &logp))
         return logp;
-      if (!check_finite(function, mu, "Location parameter", 
+      if (!check_not_nan(function, mu, "Location parameter", 
                         &logp))
         return logp;
-      if (!check_finite(function, sigma, "Scale parameter", 
+      if (!check_not_nan(function, sigma, "Scale parameter", 
                         &logp))
         return logp;
       if (!check_positive(function, sigma, "Scale parameter", 
@@ -100,6 +100,10 @@ namespace stan {
       VectorView<const T_loc> mu_vec(mu);
       VectorView<const T_scale> sigma_vec(sigma);
       size_t N = max_size(y, nu, mu, sigma);
+
+      for (size_t i = 0; i < N; i++)
+        if (value_of(nu_vec[i]) == std::numeric_limits<double>::infinity())
+          return LOG_ZERO;
 
       using std::log;
       using boost::math::digamma;
@@ -252,16 +256,16 @@ namespace stan {
       if (!check_not_nan(function, y, "Random variable", &P))
         return P;
           
-      if (!check_finite(function, nu, "Degrees of freedom parameter", &P))
+      if (!check_not_nan(function, nu, "Degrees of freedom parameter", &P))
         return P;
           
       if (!check_positive(function, nu, "Degrees of freedom parameter", &P))
         return P;
           
-      if (!check_finite(function, mu, "Location parameter", &P))
+      if (!check_not_nan(function, mu, "Location parameter", &P))
         return P;
           
-      if (!check_finite(function, sigma, "Scale parameter", &P))
+      if (!check_not_nan(function, sigma, "Scale parameter", &P))
         return P;
           
       if (!check_positive(function, sigma, "Scale parameter", &P))
@@ -284,9 +288,15 @@ namespace stan {
           
       // Explicit return for extreme values
       // The gradients are technically ill-defined, but treated as zero
-      for (size_t i = 0; i < stan::length(y); i++) {
-        if (value_of(y_vec[i]) == -std::numeric_limits<double>::infinity()) 
+      for (size_t i = 0; i < N; i++) {
+        if (value_of(y_vec[i]) == -std::numeric_limits<double>::infinity()
+            || value_of(mu_vec[i]) == std::numeric_limits<double>::infinity()
+            || value_of(sigma_vec[i]) == std::numeric_limits<double>::infinity()
+            || value_of(mu_vec[i]) == -std::numeric_limits<double>::infinity()) 
           return operands_and_partials.to_var(0.0);
+        if (value_of(y_vec[i]) == std::numeric_limits<double>::infinity()
+            || value_of(nu_vec[i]) == std::numeric_limits<double>::infinity())
+          return operands_and_partials.to_var(1.0);
       }
           
       using boost::math::ibeta;

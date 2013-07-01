@@ -26,6 +26,7 @@ namespace stan {
       using stan::math::check_finite;
       using stan::math::check_not_nan;
       using stan::math::check_positive;
+      using stan::math::check_nonnegative;
       using stan::math::value_of;
       using stan::math::check_consistent_sizes;
       using stan::math::multiply_log;
@@ -38,9 +39,11 @@ namespace stan {
 
       // set up return value accumulator
       double logp(0.0);
-      if(!check_finite(function, y, "Random variable", &logp))
+      if(!check_not_nan(function, y, "Random variable", &logp))
         return logp;
-      if(!check_finite(function, alpha, "Shape parameter", 
+      if(!check_nonnegative(function, y, "Random variable", &logp))
+        return logp;
+      if(!check_not_nan(function, alpha, "Shape parameter", 
                        &logp))
         return logp;
       if(!check_positive(function, alpha, "Shape parameter",
@@ -69,7 +72,10 @@ namespace stan {
 
       for (size_t n = 0; n < N; n++) {
         const double y_dbl = value_of(y_vec[n]);
-        if (y_dbl < 0)
+        if (y_dbl < 0
+            || y_dbl == std::numeric_limits<double>::infinity()
+            || value_of(alpha_vec[n]) == std::numeric_limits<double>::infinity()
+            || value_of(sigma_vec[n]) == std::numeric_limits<double>::infinity())
           return LOG_ZERO;
       }
       
