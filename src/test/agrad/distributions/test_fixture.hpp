@@ -1282,7 +1282,7 @@ public:
         var cdf_at_lower_bound = TestClass.template cdf
           <T0,T1,T2,T3,T4,T5,T6,T7,T8,T9>
           (p0,p1,p2,p3,p4,p5,p6,p7,p8,p9);
-        EXPECT_NEAR(std::pow(TestClass.lower_bound_vals()[i][n], power), cdf_at_lower_bound.val(),1.0e-8)
+        EXPECT_NEAR(std::pow(TestClass.lower_bound_vals()[i][n], power), cdf_at_lower_bound.val(),1.0e-5)
           << "cdf evaluated at lower bound for param " <<i+1<< " and valid value " <<n+1<<" should equal "<< TestClass.lower_bound_vals()[i][n];
       }
 
@@ -1318,7 +1318,7 @@ public:
         var cdf_at_upper_bound = TestClass.template cdf
           <T0,T1,T2,T3,T4,T5,T6,T7,T8,T9>
           (p0,p1,p2,p3,p4,p5,p6,p7,p8,p9);
-        EXPECT_NEAR(std::pow(TestClass.upper_bound_vals()[i][n], power), cdf_at_upper_bound.val(),1.0e-8) << "cdf evaluated at upper bound for param " <<i+1<< " and valid value " <<n+1<<" should equal "<< TestClass.upper_bound_vals()[i][n];
+        EXPECT_NEAR(std::pow(TestClass.upper_bound_vals()[i][n], power), cdf_at_upper_bound.val(),1.0e-5) << "cdf evaluated at upper bound for param " <<i+1<< " and valid value " <<n+1<<" should equal "<< TestClass.upper_bound_vals()[i][n];
       }
 
       expected_cdf.clear();

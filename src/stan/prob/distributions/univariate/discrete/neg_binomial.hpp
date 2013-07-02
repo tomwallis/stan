@@ -30,7 +30,7 @@ namespace stan {
 
       static const char* function = "stan::prob::neg_binomial_log(%1%)";
 
-      using stan::math::check_finite;      
+      using stan::math::check_not_nan;      
       using stan::math::check_nonnegative;
       using stan::math::check_positive;
       using stan::math::value_of;
@@ -46,11 +46,11 @@ namespace stan {
       double logp(0.0);
       if (!check_nonnegative(function, n, "Failures variable", &logp))
         return logp;
-      if (!check_finite(function, alpha, "Shape parameter", &logp))
+      if (!check_not_nan(function, alpha, "Shape parameter", &logp))
         return logp;
       if (!check_positive(function, alpha, "Shape parameter", &logp))
         return logp;
-      if (!check_finite(function, beta, "Inverse scale parameter",
+      if (!check_not_nan(function, beta, "Inverse scale parameter",
                         &logp))
         return logp;
       if (!check_positive(function, beta, "Inverse scale parameter", 
@@ -80,6 +80,10 @@ namespace stan {
 
       agrad::OperandsAndPartials<T_shape,T_inv_scale> 
         operands_and_partials(alpha,beta);
+
+      for (size_t i = 0; i< size; i++)
+        if (value_of(alpha_vec[i]) == std::numeric_limits<double>::infinity())
+          return -std::numeric_limits<double>::infinity();
 
       size_t len_ab = max_size(alpha,beta);
       DoubleVectorView<true,(is_vector<T_shape>::value 
@@ -190,7 +194,7 @@ namespace stan {
                      const T_inv_scale& beta) {
       static const char* function = "stan::prob::neg_binomial_cdf(%1%)";
           
-      using stan::math::check_finite;      
+      using stan::math::check_not_nan;      
       using stan::math::check_nonnegative;
       using stan::math::check_positive;
       using stan::math::check_consistent_sizes;
@@ -203,13 +207,13 @@ namespace stan {
       double P(1.0);
           
       // Validate arguments
-      if (!check_finite(function, alpha, "Shape parameter", &P))
+      if (!check_not_nan(function, alpha, "Shape parameter", &P))
         return P;
           
       if (!check_positive(function, alpha, "Shape parameter", &P))
         return P;
           
-      if (!check_finite(function, beta, "Inverse scale parameter",
+      if (!check_not_nan(function, beta, "Inverse scale parameter",
                         &P))
         return P;
           
@@ -248,9 +252,13 @@ namespace stan {
           
       // Explicit return for extreme values
       // The gradients are technically ill-defined, but treated as zero
-      for (size_t i = 0; i < stan::length(n); i++) {
-        if (value_of(n_vec[i]) <= 0) 
+      for (size_t i = 0; i < size; i++) {
+        if (value_of(n_vec[i]) <= 0
+            || value_of(alpha_vec[i]) == std::numeric_limits<double>::infinity()) 
           return operands_and_partials.to_var(0.0);
+        if (value_of(n_vec[i]) > 0 
+            && value_of(n_vec[i]) == std::numeric_limits<int>::infinity())
+          return operands_and_partials.to_var(1.0);
       }
           
       // Cache a few expensive function calls if alpha is a parameter

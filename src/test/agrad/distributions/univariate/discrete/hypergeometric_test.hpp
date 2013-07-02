@@ -47,6 +47,78 @@ public:
     value.push_back(-1);
   }
 
+  double num_params() {
+    return 4; //HARD TO TEST BOUNDS
+  }
+
+  std::vector<double> lower_bounds() {
+    std::vector<double> lb;
+    lb.push_back(5.0); //n
+    lb.push_back(6.0); //N
+    lb.push_back(10.0); //alpha
+    lb.push_back(10.0); //beta
+
+    return lb;
+  }
+
+  std::vector<std::vector<double> > lower_bound_vals() {
+    std::vector<std::vector<double> > lb;
+    std::vector<double> lb1;
+    std::vector<double> lb2;
+    std::vector<double> lb3;
+    std::vector<double> lb4;
+   
+    lb1.push_back(-4.1194243); //n for valid values 1
+    lb1.push_back(-4.1194243); //n for valid values 2
+    lb2.push_back(-2.7331298); //N for valid values 1
+    lb2.push_back(-2.7331298); //N for valid values 2
+    lb3.push_back(-4.1194243); //alpha for valid values 1
+    lb3.push_back(-4.1194243); //alpha for valid values 2
+    lb4.push_back(-4.1194243); //beta for valid values 1
+    lb4.push_back(-4.1194243); //beta for valid values 2
+
+    lb.push_back(lb1);
+    lb.push_back(lb2);
+    lb.push_back(lb3);
+    lb.push_back(lb4);
+
+    return lb;
+  }
+
+  std::vector<double> upper_bounds() {
+    std::vector<double> ub;
+    ub.push_back(10); //n
+    ub.push_back(10); //N
+    ub.push_back(10); //alpha
+    ub.push_back(10); //beta
+
+    return ub;
+  }
+
+  std::vector<std::vector<double> > upper_bound_vals() {
+    std::vector<std::vector<double> > ub;
+    std::vector<double> ub1;
+    std::vector<double> ub2;
+    std::vector<double> ub3;
+    std::vector<double> ub4;
+   
+    ub1.push_back(-4.1194243); //n for valid values 1
+    ub1.push_back(-4.1194243); //n for valid values 2
+    ub2.push_back(-1.0679332); //n for valid values 1
+    ub2.push_back(-1.0679332); //n for valid values 2
+    ub3.push_back(-4.1194243); //alpha for valid values 1
+    ub3.push_back(-4.1194243); //alpha for valid values 2
+    ub4.push_back(-4.1194243); //beta for valid values 1
+    ub4.push_back(-4.1194243); //beta for valid values 2
+
+    ub.push_back(ub1);
+    ub.push_back(ub2);
+    ub.push_back(ub3);
+    ub.push_back(ub4);
+
+    return ub;
+  }
+
   template <class T_n, class T_N, class T_a, class T_b,
       typename T4, typename T5, typename T6, 
       typename T7, typename T8, typename T9>

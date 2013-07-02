@@ -239,8 +239,14 @@ namespace stan {
         
       // Explicit return for extreme values
       // The gradients are technically ill-defined, but treated as zero
-      for (size_t i = 0; i < stan::length(n); i++) {
+      for (size_t i = 0; i < size; i++) {
+        if (value_of(n_vec[i]) > 0 
+            && value_of(n_vec[i]) == std::numeric_limits<int>::infinity())
+          return operands_and_partials.to_var(1.0);
         if (value_of(n_vec[i]) < 0) 
+          return operands_and_partials.to_var(0.0);
+        if (value_of(lambda_vec[i]) > 0 
+            && value_of(lambda_vec[i]) == std::numeric_limits<double>::infinity())
           return operands_and_partials.to_var(0.0);
       }
         
