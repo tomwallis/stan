@@ -201,7 +201,7 @@ We were hearing more about HMC (Hamiltonian Monte Carlo), which
 appeared promising but was also problematic in that the Hamiltonian
 dynamics simulation requires the gradient of the log posterior.
 Although possible, computing these gradients by hand on a model-by-model basis
-iis very tedious and error prone.  That is when we discovered
+is very tedious and error prone.  That is when we discovered
 reverse-mode algorithmic differentiation, which, given a
 templated \proglang{C++} function for the log posterior,
 automatically computes a proper analytic gradient up to machine
@@ -966,7 +966,7 @@ or defined is provided in Figure~\ref{block-actions.fig}.
 \begin{figure}
 \begin{center}
 \begin{tabular}{l|c|l|l}
-{\it Block} & {\it Statements?} & {\it Action} & {\it Evaluated}
+{ Block} & { Statements?} & { Action} & { Evaluated}
 \\\hline\hline
 \code{user initialization} & n/a & transform & chain
 \\[3pt]
@@ -1002,7 +1002,7 @@ steps per iteration.
 \begin{figure}
 \begin{center}
 \begin{tabular}{l|l}
-{\it Variable Categorization} & {\it Declaration Block}
+{ Variable Categorization} & { Declaration Block}
 \\ \hline\hline
 % constants & \code{transformed data}
 % \\ \hline
@@ -1810,8 +1810,8 @@ features, Jeffrey Arnold, Yuanjun Gao, and Marco Inacio.
 \begin{figure}
 \begin{center}
 \begin{tabular}{c|ccl|l}
-{\it Operation} & {\it Precedence} & {\it Associativity} & {\it
-  Placement} & {\it Description}
+{ Operation} & { Precedence} & { Associativity} & {\it
+  Placement} & { Description}
 \\ \hline \hline
 \code{||} & 9 & left & binary infix & logical or
 \\ \hline
@@ -1867,7 +1867,7 @@ features, Jeffrey Arnold, Yuanjun Gao, and Marco Inacio.
 \begin{figure}
 \begin{center}
 \begin{tabular}{l|l}
-{\it Function} & {\it Description} \\ \hline \hline
+{ Function} & { Description} \\ \hline \hline
 \code{e} &  base of natural logarithm \\ 
 \code{epsilon} &  smallest positive number \\ 
 \code{negative\_epsilon} &  largest negative value \\ 
@@ -1884,7 +1884,7 @@ features, Jeffrey Arnold, Yuanjun Gao, and Marco Inacio.
 \begin{figure}
 \begin{center}
 \begin{tabular}{l|l}
-{\it Function} & {\it Description} \\ \hline \hline
+{ Function} & { Description} \\ \hline \hline
 \code{acos} &  arc cosine \\ 
 \code{acosh} &  arc hyperbolic cosine \\ 
 \code{asin} &  arc sine \\ 
@@ -1910,7 +1910,7 @@ features, Jeffrey Arnold, Yuanjun Gao, and Marco Inacio.
 \begin{figure}
 \begin{center}
 \begin{tabular}{l|l}
-{\it Function} & {\it Description}  \\ \hline \hline
+{ Function} & { Description}  \\ \hline \hline
 \code{abs} &  double absolute value \\ 
 \code{abs} &  integer absolute value \\ 
 \code{binary\_log\_loss} &  log loss \\ 
@@ -1958,7 +1958,7 @@ features, Jeffrey Arnold, Yuanjun Gao, and Marco Inacio.
 \begin{figure}
 \begin{center}
 \begin{tabular}{l|l}
-{\it Function} & {\it Description} \\ \hline \hline
+{ Function} & { Description} \\ \hline \hline
 \code{log\_diff\_exp} & natural logarithm of difference of
 exponentials \\ 
 \code{log\_falling\_factorial} & falling factorial (Pochhammer) \\
@@ -2003,7 +2003,7 @@ exponentials \\
 \begin{figure}
 \begin{center}
 \begin{tabular}{l|l}
-{\it Function} & {\it Description} \\ \hline \hline
+{ Function} & { Description} \\ \hline \hline
 \code{block} &  sub-block of matrix \\
 \code{cholesky\_decompose} &  Cholesky decomposition \\ 
 \code{col} &  column of matrix \\ 
@@ -2058,7 +2058,7 @@ lower-triangular by transpose \\
 \begin{figure}
 \begin{center}
 \begin{tabular}{l|l}
-{\it Function} & {\it Description} \\ \hline \hline
+{ Function} & { Description} \\ \hline \hline
 \code{bernoulli\_cdf} &  Bernoulli cdf \\ 
 \code{bernoulli\_log} &  log Bernoulli pmf \\ 
 \code{bernoulli\_logit\_log} &  logit-scale log Bernoulli pmf \\ 
@@ -2109,7 +2109,7 @@ lower-triangular by transpose \\
 \begin{figure}
 \begin{center}
 \begin{tabular}{l|l}
-{\it Function} & {\it Description} \\ \hline \hline
+{ Function} & { Description} \\ \hline \hline
 \code{inv\_gamma\_cdf} & inverse gamma cdf \\ 
 \code{inv\_gamma\_log} &  log inverse gamma pdf \\ 
 \code{inv\_gamma\_rng} &  inverse gamma RNG \\ 
@@ -2158,7 +2158,7 @@ lower-triangular by transpose \\
 \begin{figure}
 \begin{center}
 \begin{tabular}{l|l}
-{\it Function} & {\it Description} \\ \hline \hline
+{ Function} & { Description} \\ \hline \hline
 \code{rayleigh\_log} & log Rayleigh pdf \\
 \code{rayleigh\_rng} & Rayleigh RNG \\
 \code{rayleigh\_cdf} & Rayleigh cdf \\
