@@ -1,5 +1,7 @@
 #include <cmath>
 
+#include <boost/math/tools/promotion.hpp>
+
 #include "stan/math/functor/apply.hpp"
 #include "stan/agrad/rev/var.hpp"
 #include "stan/agrad/rev/functor/apply.hpp"
@@ -10,7 +12,7 @@
 class exp_fun {
 public:
   static inline 
-  double f(const double x) {
+  double f(double x) {
     return std::exp(x);
   }
   static inline
@@ -18,6 +20,12 @@ public:
     return fx;
   }
 };
+template <typename T>
+inline typename boost::math::tools::promote_args<T>::type
+my_exp(const T& x) {
+  using stan::math::apply;
+  return apply<exp_fun>(x);
+}
 
 struct hypot_fun {
   static inline double f(double x1, double x2) {
@@ -30,14 +38,20 @@ struct hypot_fun {
     return x2 / fx;
   }
 };
+template <typename T1, typename T2>
+inline typename boost::math::tools::promote_args<T1,T2>::type
+my_hypot(const T1& x1, const T2&x2) {
+  using stan::math::apply;
+  return apply<hypot_fun>(x1,x2);
+}
 
 TEST(MathFunctorApply,val_unary) {
   using stan::agrad::var;
   using stan::math::apply;  // use arg-dependent lookup to find stan::agrad::apply
-  EXPECT_TRUE(std::isnan(apply<exp_fun>(var(std::numeric_limits<double>::quiet_NaN())).val()));
-  EXPECT_FLOAT_EQ(1.7 * std::exp(-3), (1.7 * apply<exp_fun>(var(-3))).val());
-  EXPECT_FLOAT_EQ(1.7 * std::exp(0), (1.7 * apply<exp_fun>(var(0))).val());
-  EXPECT_FLOAT_EQ(1.7 * std::exp(1), (1.7 * apply<exp_fun>(var(1))).val());
+  EXPECT_TRUE(std::isnan(my_exp(var(std::numeric_limits<double>::quiet_NaN())).val()));
+  EXPECT_FLOAT_EQ(1.7 * std::exp(-3), (1.7 * my_exp(var(-3))).val());
+  EXPECT_FLOAT_EQ(1.7 * std::exp(0), (1.7 * my_exp(var(0))).val());
+  EXPECT_FLOAT_EQ(1.7 * std::exp(1), (1.7 * my_exp(var(1))).val());
 }
 TEST(MathFunctorApply,grad_unary) {
   using std::vector;
@@ -47,7 +61,7 @@ TEST(MathFunctorApply,grad_unary) {
   std::vector<var> xs;
   var x = -3;
   xs.push_back(x);
-  var fx = 1.7 * apply<exp_fun>(x);
+  var fx = 1.7 * my_exp(x);
 
   std::vector<double> g;
   fx.grad(xs,g);
