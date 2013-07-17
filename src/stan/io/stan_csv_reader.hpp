@@ -38,16 +38,34 @@ namespace stan {
       double delta;
       double gamma;
       std::string algorithm;
+
+      stan_csv_metadata() 
+        : stan_version_major(0), stan_version_minor(0), stan_version_patch(0),
+          model(""), data(""), init(""),
+          append_samples(false), save_warmup(false),
+          seed(0), random_seed(false),
+          chain_id(1), iter(0), warmup(0), thin(0),
+          equal_step_sizes(false), nondiag_mass(false),
+          leapfrog_steps(0), max_treedepth(0),
+          epsilon(0), epsilon_pm(0),
+          delta(0), gamma(0),
+          algorithm("") {}
     };
 
     struct stan_csv_adaptation {
       double step_size;
       Eigen::MatrixXd metric;
+      
+      stan_csv_adaptation() 
+        : step_size(0), metric(0,0) {}
     };
     
     struct stan_csv_timing {
       double warmup;
       double sampling;
+      
+      stan_csv_timing() 
+        : warmup(0), sampling(0) {}
     };
 
     struct stan_csv {
@@ -247,6 +265,7 @@ namespace stan {
       }
       
       static bool read_samples(std::istream& in, Eigen::MatrixXd& samples, stan_csv_timing& timing) {
+        
         std::stringstream ss;
         std::string line;
 
@@ -260,64 +279,64 @@ namespace stan {
           
           bool comment_line = (in.peek() == '#');
           bool empty_line   = (in.peek() == '\n');
-          bool timing_line  = (in.peek() == ' ') || (in.peek() == 'E');
 
           std::getline(in, line);
           
-          if (!comment_line && !empty_line) {
-            
-            if (!timing_line) {
-            
-              ss << line << '\n';
-              
-              int current_cols = std::count(line.begin(), line.end(), ',') + 1;
-              if (cols == -1) {
-                cols = current_cols;
-              } else if (cols != current_cols) {
-                std::cout << "Error: expected " << cols << " columns, but found " 
-                          << current_cols << " instead for row " << rows + 1 << std::endl;
-                return false;
-              }
-              rows++;
-              
+          if (empty_line) continue;
+          if (!line.length()) break;
+          
+          if (comment_line) {
+
+            if (line.find("(Warm-up)") != std::string::npos) {
+              int left = 16;
+              int right = line.find(" seconds");
+              timing.warmup += boost::lexical_cast<double>(line.substr(left, right - left));
+            } else if (line.find("(Sampling)") != std::string::npos) {
+              int left = 16;
+              int right = line.find(" seconds");
+              timing.sampling += boost::lexical_cast<double>(line.substr(left, right - left));
             }
-            else {
-              
-              ss << line;
-              
-              if (line.find("(Warm Up)") != std::string::npos) {
-                int left = 14;
-                int right = line.find(" seconds");
-                timing.warmup += boost::lexical_cast<double>(line.substr(left, right - left));
-              } else if (line.find("(Sampling)") != std::string::npos) {
-                int left = 14;
-                int right = line.find(" seconds");
-                timing.sampling += boost::lexical_cast<double>(line.substr(left, right - left));
-              }
-                
+            
+          }
+          else {
+
+            ss << line << '\n';
+            
+            int current_cols = std::count(line.begin(), line.end(), ',') + 1;
+            if (cols == -1) {
+              cols = current_cols;
+            } else if (cols != current_cols) {
+              std::cout << "Error: expected " << cols << " columns, but found " 
+                        << current_cols << " instead for row " << rows + 1 << std::endl;
+              return false;
             }
+            rows++;
             
           }
           
           in.peek();
-          
+        
         }
+          
         ss.seekg(std::ios_base::beg);
 
         if (rows > 0) {
           samples.resize(rows, cols);
-          char comma;
           for (int row = 0; row < rows; row++) {
+            std::getline(ss, line);
+            std::stringstream ls(line);
             for (int col = 0; col < cols; col++) {
-              ss >> samples(row,col);
-              if (col != cols-1)
-                ss >> comma;
+              std::getline(ls, line, ',');
+              boost::trim(line);
+              //std::cout << "line: !" << line << "@" << std::endl;
+              samples(row, col) = boost::lexical_cast<double>(line);
+              //std::cout << "after" << std::endl << std::endl;
             }
           }
         }
         return true;
       }
-
+      
       /** 
        * Parses the file.
        * 
@@ -338,7 +357,7 @@ namespace stan {
         if (!read_adaptation(in, data.adaptation)) {
           std::cout << "Warning: non-fatal error reading adapation data" << std::endl;
         }
-        
+
         data.timing.warmup = 0;
         data.timing.sampling = 0;
         

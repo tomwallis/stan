@@ -42,6 +42,9 @@
 #include <stan/agrad/rev/log10.hpp>
 #include <stan/agrad/rev/sqrt.hpp>
 #include <stan/agrad/rev/pow.hpp>
+#include <stan/agrad/rev/inv.hpp>
+#include <stan/agrad/rev/inv_sqrt.hpp>
+#include <stan/agrad/rev/inv_square.hpp>
 #include <stan/agrad/rev/cos.hpp>
 #include <stan/agrad/rev/sin.hpp>
 #include <stan/agrad/rev/tan.hpp>
@@ -93,7 +96,9 @@
 #include <stan/agrad/rev/inv_logit.hpp>
 #include <stan/agrad/rev/Phi_approx.hpp>
 #include <stan/agrad/rev/log_loss.hpp>
+#include <stan/agrad/rev/log1m_exp.hpp>
 #include <stan/agrad/rev/log1p_exp.hpp>
+#include <stan/agrad/rev/log_diff_exp.hpp>
 #include <stan/agrad/rev/log_sum_exp.hpp>
 #include <stan/agrad/rev/square.hpp>
 #include <stan/agrad/rev/multiply_log.hpp>
@@ -102,5 +107,12 @@
 #include <stan/agrad/rev/value_of.hpp>
 #include <stan/agrad/rev/as_bool.hpp>
 #include <stan/agrad/rev/owens_t.hpp>
-
+#include <stan/agrad/rev/bessel_first_kind.hpp>
+#include <stan/agrad/rev/bessel_second_kind.hpp>
+#include <stan/agrad/rev/modified_bessel_first_kind.hpp>
+#include <stan/agrad/rev/modified_bessel_second_kind.hpp>
+#include <stan/agrad/rev/falling_factorial.hpp>
+#include <stan/agrad/rev/rising_factorial.hpp>
+#include <stan/agrad/rev/log_falling_factorial.hpp>
+#include <stan/agrad/rev/log_rising_factorial.hpp>
 #endif

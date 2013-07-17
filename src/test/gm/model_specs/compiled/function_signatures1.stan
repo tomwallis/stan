@@ -93,6 +93,10 @@ transformed data {
   transformed_data_real <- log2(d_real);
   transformed_data_real <- log10(d_real);
   transformed_data_real <- pow(d_real, d_real);
+  transformed_data_real <- inv(d_real);
+  transformed_data_real <- inv_square(d_real);
+  transformed_data_real <- inv_sqrt(d_real);
+
 
   //   trigonometric functions
   transformed_data_real <- hypot(d_real, d_real);
@@ -131,6 +135,15 @@ transformed data {
   transformed_data_real <- lmgamma(d_int, d_real);
   transformed_data_real <- lbeta(d_real, d_real);
   transformed_data_real <- binomial_coefficient_log(d_real, d_real);
+  transformed_data_real <- bessel_first_kind(d_int, d_real);
+  transformed_data_real <- bessel_second_kind(d_int, d_real);
+  transformed_data_real <- modified_bessel_first_kind(d_int, d_real);
+  transformed_data_real <- modified_bessel_second_kind(d_int, d_real);
+  transformed_data_real <- falling_factorial(d_real, d_real);
+  transformed_data_real <- rising_factorial(d_real, d_real);
+  transformed_data_real <- log_falling_factorial(d_real, d_real);
+  transformed_data_real <- log_rising_factorial(d_real, d_real);
+
 
   //   composed functions
   transformed_data_real <- expm1(d_real);
@@ -285,6 +298,15 @@ transformed data {
   transformed_data_real <- sd(d_row_vector);
   transformed_data_real <- sd(d_matrix);
   
+  //Broadcast Functions
+  transformed_data_vector <- rep_vector(d_real, d_int);
+  transformed_data_row_vector <- rep_row_vector(d_real, d_int);
+  transformed_data_matrix <- rep_matrix(d_real, d_int, d_int);
+  transformed_data_matrix <- rep_matrix(d_vector, d_int);
+  transformed_data_matrix <- rep_matrix(d_row_vector, d_int);
+  transformed_data_vector <- to_vector(d_row_vector);
+  transformed_data_vector <- to_vector(d_matrix);
+
   // Slice and Package Functions
   //   diagonal matrices
   transformed_data_vector <- diagonal(d_matrix);
@@ -435,6 +457,13 @@ transformed parameters {
   transformed_param_real <- pow(p_real, d_real);
   transformed_param_real <- pow(d_real, p_real);
   transformed_param_real <- pow(p_real, p_real);
+  transformed_param_real <- inv(d_real);
+  transformed_param_real <- inv(p_real);
+  transformed_param_real <- inv_square(d_real);
+  transformed_param_real <- inv_square(p_real);
+  transformed_param_real <- inv_sqrt(d_real);
+  transformed_param_real <- inv_sqrt(p_real);
+
 
   //   trigonometric functions
   transformed_param_real <- hypot(d_real, d_real);
@@ -511,6 +540,31 @@ transformed parameters {
   transformed_param_real <- binomial_coefficient_log(p_real, d_real);
   transformed_param_real <- binomial_coefficient_log(d_real, p_real);
   transformed_param_real <- binomial_coefficient_log(p_real, p_real);
+  transformed_param_real <- bessel_first_kind(d_int, d_real);
+  transformed_param_real <- bessel_first_kind(d_int, p_real);
+  transformed_param_real <- bessel_second_kind(d_int, d_real);
+  transformed_param_real <- bessel_second_kind(d_int, p_real);
+  transformed_param_real <- modified_bessel_first_kind(d_int, d_real);
+  transformed_param_real <- modified_bessel_first_kind(d_int, p_real);
+  transformed_param_real <- modified_bessel_second_kind(d_int, d_real);
+  transformed_param_real <- modified_bessel_second_kind(d_int, p_real);
+  transformed_param_real <- falling_factorial(d_real, d_real);
+  transformed_param_real <- falling_factorial(p_real, d_real);  
+  transformed_param_real <- falling_factorial(d_real, p_real);  
+  transformed_param_real <- falling_factorial(p_real, p_real);  
+  transformed_param_real <- rising_factorial(d_real, d_real);
+  transformed_param_real <- rising_factorial(p_real, d_real);
+  transformed_param_real <- rising_factorial(d_real, p_real);
+  transformed_param_real <- rising_factorial(p_real, p_real);
+  transformed_param_real <- log_falling_factorial(d_real, d_real);
+  transformed_param_real <- log_falling_factorial(p_real, d_real); 
+  transformed_param_real <- log_falling_factorial(d_real, p_real); 
+  transformed_param_real <- log_falling_factorial(p_real, p_real); 
+  transformed_param_real <- log_rising_factorial(d_real, d_real);
+  transformed_param_real <- log_rising_factorial(p_real, d_real);  
+  transformed_param_real <- log_rising_factorial(d_real, p_real);  
+  transformed_param_real <- log_rising_factorial(p_real, p_real);  
+
 
   //   composed functions
   transformed_param_real <- expm1(d_real);
@@ -842,6 +896,23 @@ transformed parameters {
   transformed_param_real <- sd(p_row_vector);
   transformed_param_real <- sd(d_matrix);
   transformed_param_real <- sd(p_matrix);
+
+  //Broadcast Functions
+  transformed_param_vector <- rep_vector(d_real, d_int);
+  transformed_param_vector <- rep_vector(p_real, d_int);
+  transformed_param_row_vector <- rep_row_vector(d_real, d_int);
+  transformed_param_row_vector <- rep_row_vector(p_real, d_int);
+  transformed_param_matrix <- rep_matrix(d_real, d_int, d_int);
+  transformed_param_matrix <- rep_matrix(p_real, d_int, d_int);
+  transformed_param_matrix <- rep_matrix(d_vector, d_int);
+  transformed_param_matrix <- rep_matrix(p_vector, d_int);
+  transformed_param_matrix <- rep_matrix(d_row_vector, d_int);
+  transformed_param_matrix <- rep_matrix(p_row_vector, d_int);
+
+  transformed_param_vector <- to_vector(d_row_vector);
+  transformed_param_vector <- to_vector(p_row_vector);
+  transformed_param_vector <- to_vector(d_matrix);
+  transformed_param_vector <- to_vector(p_matrix);
 
   // Slice and Package Functions
   //   diagonal matrices

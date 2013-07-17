@@ -52,7 +52,7 @@ TEST(StanIoMcmcWriter, print_sample_names) {
   std::string line;
   std::getline(sample_stream, line);
   
-  EXPECT_EQ("log_post,accept_stat,stepsize__,depth__,mu1,mu2", line);
+  EXPECT_EQ("lp__,accept_stat__,stepsize__,treedepth__,mu1,mu2", line);
   
 }
 
@@ -232,7 +232,7 @@ TEST(StanIoMcmcWriter, print_diagnostic_names) {
   std::string line;
   std::getline(diagnostic_stream, line);
   
-  EXPECT_EQ("log_post,accept_stat,stepsize__,depth__,mu1,mu2,p_mu1,p_mu2,g_mu1,g_mu2", line);
+  EXPECT_EQ("lp__,accept_stat__,stepsize__,treedepth__,mu1,mu2,p_mu1,p_mu2,g_mu1,g_mu2", line);
   
 }
 
@@ -263,6 +263,10 @@ TEST(StanIoMcmcWriter, print_diagnostic_params) {
   
   stan::mcmc::adapt_diag_e_nuts<example_model_namespace::example_model, rng_t> sampler(model, base_rng, 0);
   sampler.seed(real, discrete);
+  sampler.z().p(0) = 0;
+  sampler.z().p(1) = 0;
+  sampler.z().g(0) = 0;
+  sampler.z().g(1) = 0;
   
   // Writer
   std::stringstream sample_stream;
@@ -335,9 +339,9 @@ TEST(StanIoMcmcWriter, print_timing) {
 
   std::stringstream expected_stream;
   expected_stream << std::endl;
-  expected_stream << "Elapsed Time: " << warm << " seconds (Warm Up)" << std::endl;
-  expected_stream << "              " << sampling << " seconds (Sampling)" << std::endl;
-  expected_stream << "              " << warm + sampling << " seconds (Total)" << std::endl;
+  expected_stream << "# Elapsed Time: " << warm << " seconds (Warm-up)" << std::endl;
+  expected_stream << "#               " << sampling << " seconds (Sampling)" << std::endl;
+  expected_stream << "#               " << warm + sampling << " seconds (Total)" << std::endl;
   expected_stream << std::endl;
   
   std::string line;
