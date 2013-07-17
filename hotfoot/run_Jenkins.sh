@@ -11,7 +11,7 @@ then
   exit 10
 fi
 
-FAILURES=`grep -l -F -i "fail" ${OUTPUT}/$1/stdout/*`
+FAILURES=`grep -l -F "FAILED" ${OUTPUT}/$1/stdout/*`
 if [ -n "$FAILURES" ]
 then
   echo "$1 has test failures at runtime"
@@ -39,7 +39,8 @@ exit 0
 # All environmental variables are exported when calling qsub
 # These first two are supposedly exported by Jenkins
 export GIT_COMMIT=`git rev-parse --short HEAD`
-export GIT_BRANCH=`git rev-parse --abbrev-ref HEAD`
+GIT_BRANCH=`git rev-parse --abbrev-ref HEAD`
+export GIT_BRANCH=${GIT_BRANCH//\//_}
 export STAN_HOME=/hpc/stats/projects/stan
 
 # prepare ccache (not working well yet because of -MM)
@@ -56,17 +57,19 @@ cd ${STAN_HOME}
 # Tweak CFLAGS for feature/* branches and develop
 if [[ ${GIT_BRANCH} != "master" && ${GIT_BRANCH} != hotfix* && ${GIT_BRANCH} != release* ]]
 then
-  sed -i 's@^CFLAGS =@CFLAGS = --std=c++11 -DGTEST_HAS_PTHREAD=0 -pedantic -Wextra @' makefile
+  sed -i 's@^CFLAGS =@CFLAGS = -DGTEST_HAS_PTHREAD=0 -pedantic -Wextra @' makefile
   sed -i '/-Wno/d' make/os_linux
 fi
 
 # No need to shuffle tests on Hotfoot
-git revert --no-edit --no-commit 83e1b2eed4298ba0cd2b519bce7fe25289440df7
+#git revert --no-edit --no-commit 83e1b2eed4298ba0cd2b519bce7fe25289440df7
+sed -i '/ifneq (\$(shell \$(WH) shuf),)/,/^$/d' make/tests
 trap "git reset --hard HEAD" EXIT
 
 # make a directory for all test output
 export OUTPUT=${STAN_HOME}/hotfoot/${GIT_BRANCH}/${GIT_COMMIT}
 mkdir -p ${OUTPUT}
+trap "tar -cjf hotfoot/${GIT_BRANCH}_${GIT_COMMIT}.tar.bz2 hotfoot/${GIT_BRANCH}/${GIT_COMMIT}/" EXIT
 trap "rm -rf hotfoot/${GIT_BRANCH}" EXIT
 
 # make an alias with default arguments to qsub
@@ -121,19 +124,25 @@ then
   exit ${CODE}
 fi
 
+nice make CC="${CC}" test/dummy.cpp
+if [ $? -ne 0 ]
+then
+  echo "make test/dummy.cpp failed; aborting"
+  exit ${CODE}
+fi
+
 # test-headers
 find src/stan/ -type f -name "*.hpp" -print | \
-sed 's@.hpp@.pch@g' > ${OUTPUT}/tests.txt
+sed 's@.hpp@.hpp-test@g' > ${OUTPUT}/tests.txt
 
 TARGET='test-headers'
 setup ${TARGET}
 
-# FIXME: enable this
-#QSUB -N "${TARGET}" -t 0-${TEST_MAX} -l walltime=0:00:00:29 \
-#-o localhost:${SO} -e localhost:${SE} hotfoot/test.sh
-#while [ $(ls ${SO} | wc -l) -le ${TEST_MAX} ]; do sleep 10; done
-#CODE = parse_output "${TARGET}"
-#[ ${CODE} -ne 0 ] && exit ${CODE}
+QSUB -N "${TARGET}" -t 0-${TEST_MAX} -l walltime=0:00:00:59 \
+-o localhost:${SO} -e localhost:${SE} hotfoot/test.sh
+while [ $(ls ${SO} | wc -l) -le ${TEST_MAX} ]; do sleep 10; done
+CODE = parse_output "${TARGET}"
+[ ${CODE} -ne 0 ] && exit ${CODE}
 
 # test-libstan
 find src/test/ -type f -name "*_test.cpp" -print | \
@@ -156,7 +165,7 @@ sed 's@.stan@@g' > ${OUTPUT}/tests.txt
 TARGET='test-gm'
 setup ${TARGET}
 
-QSUB -N "${TARGET}" -t 0-${TEST_MAX} -l walltime=0:00:07:59 \
+QSUB -N "${TARGET}" -t 0-${TEST_MAX} -l walltime=0:00:08:59 \
 -o localhost:${SO} -e localhost:${SE} hotfoot/test.sh
 while [ $(ls ${SO} | wc -l) -le ${TEST_MAX} ]; do sleep 10; done
 CODE = parse_output "${TARGET}"
@@ -169,7 +178,7 @@ sed 's@src/@@g' | sed 's@_test.cpp@@g' > ${OUTPUT}/tests.txt
 TARGET='test-models'
 setup ${TARGET}
 
-QSUB -N "${TARGET}" -t 0-${TEST_MAX} -l walltime=0:00:7:59 \
+QSUB -N "${TARGET}" -t 0-${TEST_MAX} -l walltime=0:00:8:59 \
 -o localhost:${SO} -e localhost:${SE} hotfoot/test.sh
 while [ $(ls ${SO} | wc -l) -le ${TEST_MAX} ]; do sleep 10; done
 CODE = parse_output "${TARGET}"
@@ -188,13 +197,13 @@ while [ $(ls ${SO} | wc -l) -le ${TEST_MAX} ]; do sleep 10; done
 
 find src/test/agrad/distributions/ -type f -name "*_generated_test.cpp" -print | \
 grep -v -F "00000" | \
-sed 's@src/@@g' | sed 's@test.cpp@@g' > ${OUTPUT}/tests.txt
+sed 's@src/@@g' | sed 's@_test.cpp@@g' > ${OUTPUT}/tests.txt
 
 setup ${TARGET}
 
 QSUB -N "${TARGET}" -t 0-${TEST_MAX} -l walltime=0:00:02:59 \
 -o localhost:${SO} -e localhost:${SE} hotfoot/test.sh
-while [ $(ls ${SO} | wc -l) -le ${TEST_MAX} ]; do sleep 10; done
+while [ $(ls ${SO} | wc -l) -le ${TEST_MAX} ]; do sleep 10; done # FIXME
 
 CODE = parse_output "${TARGET}"
 [ ${CODE} -ne 0 ] && exit ${CODE}
