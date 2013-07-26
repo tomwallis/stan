@@ -3,14 +3,14 @@ bin/libstan.a : $(LIBSTAN_OFILES)
 	@mkdir -p $(dir $@)
 	$(AR) -rs bin/libstan.a $(LIBSTAN_OFILES)
 
-TEMPLATE_INSTANTIATION := $(shell find src/stan/gm -type f -name '*_inst.cpp')
-TEMPLATE_INSTANTIATION += $(shell find src/stan/gm -type f -name '*_def.cpp')
-TEMPLATE_INSTANTIATION := $(TEMPLATE_INSTANTIATION:src/%.cpp=bin/%.o)
-bin/libstanc.a : $(TEMPLATE_INSTANTIATION)
+STANC_TEMPLATE_INSTANTIATION := $(shell find src/stan/gm -type f -name '*_inst.cpp')
+STANC_TEMPLATE_INSTANTIATION += $(shell find src/stan/gm -type f -name '*_def.cpp')
+STANC_TEMPLATE_INSTANTIATION := $(STANC_TEMPLATE_INSTANTIATION:src/%.cpp=bin/%.o)
+bin/libstanc.a : $(STANC_TEMPLATE_INSTANTIATION)
 	@mkdir -p $(dir $@)
-	$(AR) -rs bin/libstanc.a $(TEMPLATE_INSTANTIATION)
+	$(AR) -rs bin/libstanc.a $(STANC_TEMPLATE_INSTANTIATION)
 
-$(TEMPLATE_INSTANTIATION) : bin/%.o : src/%.cpp
+$(STANC_TEMPLATE_INSTANTIATION) : bin/%.o : src/%.cpp
 	@mkdir -p $(dir $@)
 	$(COMPILE.c) -O$(O_STANC) $(OUTPUT_OPTION) $<
 
@@ -21,5 +21,5 @@ $(TEMPLATE_INSTANTIATION) : bin/%.o : src/%.cpp
 ##
 ifneq (,$(filter-out clean%,$(MAKECMDGOALS)))
   -include $(addsuffix .d,$(basename $(LIBSTAN_OFILES)))
-  -include $(addsuffix .d,$(basename $(TEMPLATE_INSTANTIATION)))
+  -include $(addsuffix .d,$(basename $(STANC_TEMPLATE_INSTANTIATION)))
 endif
