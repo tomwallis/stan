@@ -1,7 +1,18 @@
-LIBSTAN_OFILES = bin/stan/agrad/rev/var_stack.o bin/stan/math/matrix.o bin/stan/agrad/matrix.o
-bin/libstan.a : $(LIBSTAN_OFILES)
+LIBSTAN_OFILES := bin/stan/agrad/rev/var_stack.o bin/stan/math/matrix.o bin/stan/agrad/matrix.o
+STAN_TEMPLATE_INSTANTIATION := $(shell find src/stan -name gm -prune -o -type f -name '*_inst.cpp' -print)
+STAN_TEMPLATE_INSTANTIATION := $(STAN_TEMPLATE_INSTANTIATION:src/%.cpp=bin/%.o)
+
+abc:
+	@echo 'stan templates: $(STAN_TEMPLATE_INSTANTIATION)'
+
+bin/libstan.a : $(LIBSTAN_OFILES) $(STAN_TEMPLATE_INSTANTIATION)
 	@mkdir -p $(dir $@)
-	$(AR) -rs bin/libstan.a $(LIBSTAN_OFILES)
+	$(AR) -rs bin/libstan.a $(LIBSTAN_OFILES) $(STAN_TEMPLATE_INSTANTIATION)
+
+$(STAN_TEMPLATE_INSTANTIATION) : bin/%.o : src/%.cpp
+	@mkdir -p $(dir $@)
+	$(COMPILE.c) -O$(O_STAN) $(OUTPUT_OPTION) $<
+
 
 STANC_TEMPLATE_INSTANTIATION := $(shell find src/stan/gm -type f -name '*_inst.cpp')
 STANC_TEMPLATE_INSTANTIATION += $(shell find src/stan/gm -type f -name '*_def.cpp')
