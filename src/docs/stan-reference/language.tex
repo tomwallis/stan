@@ -254,10 +254,12 @@ bounds, or both.  There are four constrained vector data types,
 \code{simplex} for unit simplexes, \code{unit\_vector} for unit-length
 vectors, \code{ordered} for ordered vectors of scalars and
 \code{positive\_ordered} for vectors of positive ordered scalars.
-There are two specialized matrix data types,
-\code{corr\_matrix} and \code{cov\_matrix}, for correlation matrices
-(symmetric, positive definite, unit diagonal) and covariance matrices
-(symmetric, positive definite).
+There are specialized matrix data types \code{corr\_matrix} and
+\code{cov\_matrix} for correlation matrices (symmetric, positive
+definite, unit diagonal) and covariance matrices (symmetric, positive
+definite).  The type \code{cholesky\_factor\_cov} is for Cholesky
+factors of covariance matrices (lower triangular, positive diagonal,
+product with own transpose is a covariance matrix).
 
 \subsection{Arrays}
 
@@ -697,14 +699,41 @@ cov_matrix[K] Omega;
 declares \code{Omega} to be a $K \times K$ covariance matrix, where
 $K$ is the value of the data variable \code{K}.  
 
+\subsection{Cholesky Factors of Covariance Matrices}
+
+Matrix variables may be constrained to represent the Cholesky factors
+of a covariance matrix.  This is often more convenient or more
+efficient than representing covariance matrices directly.  
+
+A Cholesky factor $L$ is an $M \times N$ lower-triangular matrix (if
+$m < n$ then $L[m,n] =0$) with a positive diagonal ($L[k,k] = 0$) and
+$M \geq N$.  If $L$ is a Cholesky factor, then $\Sigma = L \, L^{\top}$
+is a covariance matrix.  Furthermore, every covariance matrix has a
+Cholesky factorization.
+
+The typical case of a square Cholesky factor may be declared with a
+single dimension,
+%
+\begin{quote}
+\begin{Verbatim}
+cholesky_factor_cov[4] L;
+\end{Verbatim}
+\end{quote}
+%
+In general, two dimensions may be declared, with the above being equal to 
+\code{cholesky\_factor\_cov[4,4]}.  The
+type \code{cholesky\_factor\_cov[M,N]} may be used for the general 
+$M \times N$.
+
 \subsection{Assigning Constrained Variables}
 
 Constrained variables of all types may be assigned to other variables
 of the same unconstrained type and vice-versa.  For instance, a
-variable declared to be \code{real<lower=0,upper=1>} could be assigned to a
-variable declared as \code{real} and vice-versa.  Similarly,
-a variable declared as \code{matrix[3,3]} may be assigned to a
-variable declared as \code{cov\_matrix[3]} and vice-versa.  
+variable declared to be \code{real<lower=0,upper=1>} could be assigned
+to a variable declared as \code{real} and vice-versa.  Similarly, a
+variable declared as \code{matrix[3,3]} may be assigned to a variable
+declared as \code{cov\_matrix[3]} or
+\code{cholesky\_factor\_cov[3]}, and vice-versa.
 
 Checks are carried out at the end of each relevant block of statements
 to ensure constraints are enforced.  This includes run-time size
@@ -828,11 +857,12 @@ declaration
 %
 \begin{quote}
 \begin{Verbatim}  
-cov_matrix[5] mu[2,3,4];
+cholesky_factor_cov[5,6] mu[2,3,4];
 \end{Verbatim}
 \end{quote}
 % 
-of a $2 \times 3 \times 4$ array of $5 \times 5$ covariance matrices.
+of a $2 \times 3 \times 4$ array of $5 \times 6$ Cholesky factors of
+covariance matrices.
 
 \subsection{Accessing Array Elements and Subarrays}
 
@@ -1033,9 +1063,24 @@ Examples of legal variable identifiers are as follows.
 Unlike in \R and \BUGS, variable identifiers in \Stan may not contain
 a period character.  
 
+\subsection{Reserved Names}
+
+\subsubsection{Model Name}
+
+The name of the model cannot be used as a variable within the model.
+This is usually not a problem because the default in \code{bin/stanc}
+is to append \code{\_model} to the name of the file containing the
+model specification.  For example, if the model is in file
+\code{foo.stan}, it would not be legal to have a variable named
+\code{foo\_model} when using the default model name through
+\code{bin/stanc}.  With user-specified model names, variables cannot
+match the model.
+
+\subsubsection{Reserved Words from Stan Language}
+
 The following list contains reserved words for \Stan's programming
-language.  Not all of these features are implemented, but the tokens
-are reserved for future use.
+language.  Not all of these features are implemented in Stan yet, but
+the tokens are reserved for future use.
 %
 \begin{quote}
 \code{for},
@@ -1063,6 +1108,7 @@ any of the following.
 \code{positive\_ordered},
 \code{row\_vector},
 \code{matrix},
+\code{cholesky\_factor\_cov},
 \code{corr\_matrix},
 \code{cov\_matrix}.
 \end{quote}
@@ -1082,11 +1128,20 @@ nor will they conflict with the names of predefined functions or
 distributions.  Nevertheless, these names should be avoided for the
 sake of program clarity.
 
+\subsubsection{Reserved Names from Stan Implementation}
+
 Some variable names are reserved because they are used within
 Stan's \Cpp implementation.  These are
+%
 \begin{quote}
-var.
+var
+fvar
 \end{quote}.
+%
+Most variables used in the implementation are suffixed with
+\code{\_\_}, so there is little chance of conflict.
+
+\subsubsection{Reserved Names from C++}
 
 Finally, variable names, including the names of models, should not
 conflict with any of the C++ keywords.
@@ -1579,6 +1634,7 @@ primitive types.
 \code{matrix} & \code{matrix} \\
 \code{cov\_matrix} & \code{matrix} \\
 \code{corr\_matrix} & \code{matrix} \\
+\code{cholesky\_factor\_cov} & \code{matrix} \\
 \end{tabular}
 \hspace{0.4in}
 \begin{tabular}{c|c}
@@ -3127,6 +3183,7 @@ var_type ::= 'int' range_constraint
            | 'unit_vector' '[' expression ']'
            | 'row_vector' range_constraint '[' expression ']'
            | 'matrix' range_constraint '[' expression ',' expression ']'
+           | 'cholesky_factor_cov' '[' expression ?(',' expression) ']'
            | 'corr_matrix' '[' expression ']'
            | 'cov_matrix' '[' expression ']'
 
