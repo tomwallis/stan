@@ -1637,13 +1637,11 @@ also include the more involved, but more scalable limited-memory BFGS
 optimization; see \citep{NocedalWright:2006}.  As its name implies,
 conjugate gradient optimization requires gradient evaluations.
 
-% \subsubsection{Dual averaging}
+\subsubsection{Accelerated gradient}
 
-% The dual averaging scheme of \cite{Nesterov:2009} is included for
-% model optimization.  Dual averaging is also used during warmup to
-% estimate covariance matrices for HMC and Metropolis sampling.  Dual
-% averaging uses the gradient of the log probabilty function.
-
+Additionally, \proglang{Stan} implements a crude version of Nesterov's
+accelerated gradient optimizer \cite{Nesterov:1983} which combines
+gradient updates with a momentum-like update to speed up convergence.
 
 \section{Random number generation}\label{rng.section}
 
