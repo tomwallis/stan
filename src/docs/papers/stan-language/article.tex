@@ -17,8 +17,8 @@
         %
         \\[9pt]
         %
-        {\bf\large Marcus Brubaker}
-        \\ Toyota Technological Institute
+        {\bf\large Marcus A.\ Brubaker}
+        \\ TTI-Chicago
         %
     \And
         %
@@ -1097,7 +1097,10 @@ The list is completed with two types of local variables, loop indices
 and traditional local variables.  Unlike \proglang{BUGS},
 \proglang{Stan} allows local variables to be declared and assigned.
 For example, it is possible to compute the sum of the squares of
-entries in an array or vector \code{y} as follows.
+entries in an array or vector \code{y} as follows.%
+%
+\footnote{The built-in squared norm function is the right way to
+  implement sums of squares in \proglang{Stan}.}
 %
 \begin{Code}
 { 
@@ -1242,7 +1245,7 @@ bounds, or both.  This includes the types used in arrays, and the real
 types used in vectors and matrices.
 
 Vector types may be constrained to be unit simplexes (all entries
-non-negative and summing to 1), unit length (sum of squares is 1), or
+non-negative and summing to 1), unit length vectors (sum of squares is 1), or
 ordered (entries are in ascending order), positive ordered (entries in
 ascending order, all non-negative), using the types \code{simplex[K]},
 \code{unit_vector[K]}, \code{ordered[K]}, or
@@ -1407,8 +1410,7 @@ calculate gradients, Hessians, and higher-order derivatives in
 \proglang{Stan}, we require \proglang{C++} functions that are 
 templated separately on all of their arguments.  In order for these
 functions to be efficient in computing both values and derivatives,
-they need to be vectorized so that shared computations can be reused
-and virtual function calls eliminated.
+they need to be vectorized so that shared computations can be reused.
 
 \subsection{Basic operators}
 
@@ -1427,7 +1429,7 @@ The full set of operators is listed in Figure~\ref{operators.fig}.
 
 \proglang{Stan} provides an especially rich set of special functions.
 This includes all of the \proglang{C++} math library functions, as
-well as numberous more specialized functions such as Bessel functions,
+well as numerous more specialized functions such as Bessel functions,
 gamma and digamma functions, and generalized linear model link
 functions and their inverses.  There are also many compound functions,
 such as \code{log1m(x)}, which is more stable arithmetically for
@@ -1447,23 +1449,23 @@ row of \code{Sigma}.
 
 Various reductions are provided for arrays and matrices, such as sums,
 means, standard deviations and norms.  Replications are also available
-to copy a value into ever cell of a matrix.  Slices of matrices and
+to copy a value into every cell of a matrix.  Slices of matrices and
 vectors may be accessed by row, column, or general sub-block
 operations.
 
 Matrix operators use the types of their operands to determine the type
-of the result.  For instance, multiplying a vector by a row vector
-returns a matrix, whereas multiplying a row vector by a vector returns
-a real.  A postfix apostrophe (\code{'}) is used for matrix and vector
-transposition.  For example, if \code{y} and \code{mu} are vectors and
-\code{Sigma} is a square matrix, all of the same dimensionality, then
-\code{y - mu} is a vector, \code{(y - mu)'} is a row vector, \code{(y
-  - mu)' * Sigma} is a row vector, and \code{(y - mu)' * Sigma * (y -
-  mu)} will be a real value.  Matrix division is provided, which is
-much more arithmetically stable than inversion, e.g., \code{(y - mu)'
-  / Sigma} computes the same function as \code{(y - mu)' *
-  inverse(Sigma)}.  \proglang{Stan} also supports elementwise
-multiplication (\code{.*}) and division (\code{./}).
+of the result.  For instance, multiplying a vector by a (column) row
+vector returns a matrix, whereas multiplying a row vector by a
+(column) vector returns a real.  A postfix apostrophe (\code{'}) is
+used for matrix and vector transposition.  For example, if \code{y}
+and \code{mu} are vectors and \code{Sigma} is a square matrix, all of
+the same dimensionality, then \code{y - mu} is a vector, \code{(y -
+  mu)'} is a row vector, \code{(y - mu)' * Sigma} is a row vector, and
+\code{(y - mu)' * Sigma * (y - mu)} will be a real value.  Matrix
+division is provided, which is much more arithmetically stable than
+inversion, e.g., \code{(y - mu)' / Sigma} computes the same function
+as \code{(y - mu)' * inverse(Sigma)}.  \proglang{Stan} also supports
+elementwise multiplication (\code{.*}) and division (\code{./}).
 
 Linear algebra functions are provided for trace, left and right
 division, Cholesky factorization, determinants and log determinants,
@@ -1472,7 +1474,7 @@ decomposition.  All of these operations may be applied to matrices of
 parameters or constants.  Various functions are specialized for speed,
 such as quadratic products, diagonal specializations, multiply by self
 transposed, e.g., the previous example could be written as
-\code{quad_form(Sigma, y - mu)}.
+\code{quad\_form(Sigma, y - mu)}.
 
 The full set of matrix and linear-algebra functions is listed in
 Figure~\ref{matrix-functions.fig}; operators, which also apply to
@@ -1599,11 +1601,13 @@ to adapt to the local curvature of the posterior.
 \subsubsection{Metropolis-Hastings}
 
 \proglang{Stan} supports random-walk Metropolis-Hastings samplers with
-multivariate normal proposals.  The covariance matrix used can be
-adapted during warmup, assuming either equal diagonal covariance,
-diagonal covariance, or a full covariance matrix.  Metropolis-Hastings
-does not require any derivatives of the log probability function, but lack
-of gradient information induces random walk behavior.
+multivariate normal proposals, the primary purpose of which is to
+provide baselines against which to measure more efficient approaches
+to sampling.  The covariance matrix used can be adapted during warmup,
+assuming either equal diagonal covariance, diagonal covariance, or a
+full covariance matrix.  Metropolis-Hastings does not require any
+derivatives of the log probability function, but the lack of gradient
+information induces random walk behavior.
 
 
 \subsubsection{Ensemble Samplers}
@@ -1633,12 +1637,12 @@ also include the more involved, but more scalable limited-memory BFGS
 optimization; see \citep{NocedalWright:2006}.  As its name implies,
 conjugate gradient optimization requires gradient evaluations.
 
-\subsubsection{Dual averaging}
+% \subsubsection{Dual averaging}
 
-The dual averaging scheme of \cite{Nesterov:2009} is included for
-model optimization.  Dual averaging is also used during warmup to
-estimate covariance matrices for HMC and Metropolis sampling.  Dual
-averaging uses the gradient of the log probabilty function.
+% The dual averaging scheme of \cite{Nesterov:2009} is included for
+% model optimization.  Dual averaging is also used during warmup to
+% estimate covariance matrices for HMC and Metropolis sampling.  Dual
+% averaging uses the gradient of the log probabilty function.
 
 
 \section{Random number generation}\label{rng.section}
