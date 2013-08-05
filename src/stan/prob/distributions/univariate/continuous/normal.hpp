@@ -1,16 +1,7 @@
 #ifndef __STAN__PROB__DISTRIBUTIONS__UNIVARIATE__CONTINUOUS__NORMAL_HPP__
 #define __STAN__PROB__DISTRIBUTIONS__UNIVARIATE__CONTINUOUS__NORMAL_HPP__
 
-#include <boost/random/normal_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
-//#include <boost/utility/enable_if.hpp>
-
-//#include <stan/agrad.hpp>
-//#include <stan/math.hpp>
-#include <stan/math/error_handling.hpp>
 #include <stan/meta/traits.hpp>
-#include <stan/prob/constants.hpp>
-#include <stan/prob/traits.hpp>
 
 namespace stan {
 

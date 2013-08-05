@@ -8,6 +8,10 @@ namespace stan {
     
     template stan::agrad::var normal_log<double,stan::agrad::var,double>
     (const double&, const stan::agrad::var&, const double&);
+    template stan::agrad::var normal_log<stan::agrad::var,double,double>
+    (const stan::agrad::var&, const double&, const double&);
+
+
     /*template double normal_log<true,double,double,double>
     (const double&, const double&, const double&);
     template double normal_log<false,double,double,double>
