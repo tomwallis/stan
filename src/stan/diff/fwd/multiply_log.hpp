@@ -3,7 +3,7 @@
 
 #include <stan/diff/fwd/fvar.hpp>
 #include <stan/meta/traits.hpp>
-#include <stan/math/functions/multiply_log.hpp>
+#include <stan/math/scalar/multiply_log.hpp>
 
 namespace stan{
 

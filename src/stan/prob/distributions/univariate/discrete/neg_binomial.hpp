@@ -7,13 +7,13 @@
 #include <boost/math/special_functions/digamma.hpp>
 #include <stan/diff.hpp>
 #include <stan/math/error_handling.hpp>
-#include <stan/math/functions/value_of.hpp>
+#include <stan/math/scalar/value_of.hpp>
 #include <stan/meta/traits.hpp>
 #include <stan/prob/traits.hpp>
 #include <stan/prob/constants.hpp>
 #include <stan/prob/internal_math.hpp>
 
-#include <stan/math/functions/binomial_coefficient_log.hpp>
+#include <stan/math/scalar/binomial_coefficient_log.hpp>
 
 namespace stan {
 

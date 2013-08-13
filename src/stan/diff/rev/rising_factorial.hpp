@@ -5,7 +5,7 @@
 #include <stan/diff/rev/op/vd_vari.hpp>
 #include <stan/diff/rev/op/dv_vari.hpp>
 #include <stan/diff/rev/op/vv_vari.hpp>
-#include <stan/math/functions/rising_factorial.hpp>
+#include <stan/math/scalar/rising_factorial.hpp>
 #include <boost/math/special_functions/digamma.hpp>
 
 namespace stan {

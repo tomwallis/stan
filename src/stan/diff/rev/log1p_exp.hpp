@@ -3,7 +3,7 @@
 
 #include <stan/diff/rev/var.hpp>
 #include <stan/diff/rev/op/v_vari.hpp>
-#include <stan/math/functions/log1p_exp.hpp>
+#include <stan/math/scalar/log1p_exp.hpp>
 #include <stan/diff/rev/calculate_chain.hpp>
 
 namespace stan {

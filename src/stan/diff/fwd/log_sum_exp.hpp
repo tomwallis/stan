@@ -3,7 +3,9 @@
 
 #include <stan/diff/fwd/fvar.hpp>
 #include <stan/meta/traits.hpp>
-#include <stan/math/functions/log_sum_exp.hpp>
+#include <stan/math/scalar/log_sum_exp.hpp>
+#include <stan/math/array/log_sum_exp.hpp>
+
 
 namespace stan{
 

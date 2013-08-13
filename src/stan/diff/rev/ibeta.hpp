@@ -11,7 +11,7 @@
 #include <stan/diff/rev/op/dvv_vari.hpp>
 #include <stan/diff/rev/op/dvd_vari.hpp>
 #include <stan/diff/rev/op/ddv_vari.hpp>
-#include <stan/math/functions/ibeta.hpp>
+#include <stan/math/scalar/ibeta.hpp>
 
 namespace stan {
   namespace diff {

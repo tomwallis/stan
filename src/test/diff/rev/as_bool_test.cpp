@@ -1,7 +1,7 @@
 #include <stan/diff/rev/as_bool.hpp>
 #include <test/diff/util.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/functions/as_bool.hpp>
+#include <stan/math/scalar/as_bool.hpp>
 
 TEST(AgradRev,asBool) {
   using stan::math::as_bool;

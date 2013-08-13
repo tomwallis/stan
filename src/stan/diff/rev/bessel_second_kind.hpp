@@ -6,7 +6,7 @@
 #include <stan/diff/rev/op/vd_vari.hpp>
 #include <stan/diff/rev/op/dv_vari.hpp>
 #include <stan/math/constants.hpp>
-#include <stan/math/functions/bessel_second_kind.hpp>
+#include <stan/math/scalar/bessel_second_kind.hpp>
 
 namespace stan {
   namespace diff {

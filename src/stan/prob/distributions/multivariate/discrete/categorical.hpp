@@ -6,7 +6,7 @@
 
 #include <stan/math/error_handling.hpp>
 #include <stan/math/matrix_error_handling.hpp>
-#include <stan/math/functions/value_of.hpp>
+#include <stan/math/scalar/value_of.hpp>
 #include <stan/math/matrix/sum.hpp>
 #include <stan/prob/constants.hpp>
 #include <stan/prob/traits.hpp>

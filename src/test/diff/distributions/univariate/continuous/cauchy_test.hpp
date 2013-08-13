@@ -1,8 +1,8 @@
 // Arguments: Doubles, Doubles, Doubles
 #include <stan/prob/distributions/univariate/continuous/cauchy.hpp>
 
-#include <stan/math/functions/log1p.hpp>
-#include <stan/math/functions/square.hpp>
+#include <stan/math/scalar/log1p.hpp>
+#include <stan/math/scalar/square.hpp>
 
 using std::vector;
 using std::numeric_limits;

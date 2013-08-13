@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include <stan/diff/fwd.hpp>
-#include <stan/math/functions/inv_square.hpp>
+#include <stan/math/scalar/inv_square.hpp>
 #include <stan/math/constants.hpp>
 
 TEST(AgradFvar, inv_square) {

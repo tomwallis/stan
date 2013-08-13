@@ -2,7 +2,7 @@
 #include <stan/prob/distributions/univariate/discrete/beta_binomial.hpp>
 #include <boost/math/special_functions/binomial.hpp>
 
-#include <stan/math/functions/lbeta.hpp>
+#include <stan/math/scalar/lbeta.hpp>
 
 using std::vector;
 using std::numeric_limits;

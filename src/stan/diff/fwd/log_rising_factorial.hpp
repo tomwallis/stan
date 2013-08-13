@@ -3,7 +3,7 @@
 
 #include <stan/diff/fwd/fvar.hpp>
 #include <stan/meta/traits.hpp>
-#include <stan/math/functions/log_rising_factorial.hpp>
+#include <stan/math/scalar/log_rising_factorial.hpp>
 #include <boost/math/special_functions/digamma.hpp>
 
 namespace stan {

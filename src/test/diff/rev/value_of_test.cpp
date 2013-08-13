@@ -1,7 +1,7 @@
 #include <stan/diff/rev/value_of.hpp>
 #include <test/diff/util.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/functions/value_of.hpp>
+#include <stan/math/scalar/value_of.hpp>
 
 TEST(AgradRev,value_of) {
   using stan::diff::var;

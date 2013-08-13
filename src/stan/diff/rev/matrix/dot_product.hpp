@@ -8,7 +8,7 @@
 #include <stan/math/matrix/typedefs.hpp>
 #include <stan/math/matrix/validate_vector.hpp>
 #include <stan/math/matrix/validate_matching_sizes.hpp>
-#include <stan/math/functions/value_of.hpp>
+#include <stan/math/scalar/value_of.hpp>
 #include <stan/diff/rev/var.hpp>
 #include <stan/diff/rev/vari.hpp>
 #include <stan/diff/rev/matrix/typedefs.hpp>

@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include <stan/diff/fwd.hpp>
-#include <stan/math/functions/Phi.hpp>
+#include <stan/math/scalar/Phi.hpp>
 #include <stan/prob/distributions/univariate/continuous/normal.hpp>
 
 TEST(AgradFvar,Phi) {

@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include <stan/diff/fwd.hpp>
-#include <stan/math/functions/inv_logit.hpp>
+#include <stan/math/scalar/inv_logit.hpp>
 
 TEST(AgradFvar, invLogit) {
   using stan::diff::fvar;

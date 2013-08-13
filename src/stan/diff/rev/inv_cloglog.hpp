@@ -2,7 +2,7 @@
 #define __STAN__DIFF__REV__INV_CLOGLOG_HPP__
 
 #include <stan/diff/rev/var.hpp>
-#include <stan/math/functions/inv_cloglog.hpp>
+#include <stan/math/scalar/inv_cloglog.hpp>
 #include <stan/diff/rev/op/v_vari.hpp>
 
 namespace stan {

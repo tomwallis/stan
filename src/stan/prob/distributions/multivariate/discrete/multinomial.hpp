@@ -7,7 +7,7 @@
 
 #include <stan/math/error_handling.hpp>
 #include <stan/math/error_handling.hpp>
-#include <stan/math/functions/multiply_log.hpp>
+#include <stan/math/scalar/multiply_log.hpp>
 #include <stan/math/matrix_error_handling.hpp>
 #include <stan/prob/constants.hpp>
 #include <stan/prob/distributions/univariate/discrete/binomial.hpp>

@@ -3,7 +3,7 @@
 
 #include <stan/diff/fwd/fvar.hpp>
 #include <stan/meta/traits.hpp>
-#include <stan/math/functions/square.hpp>
+#include <stan/math/scalar/square.hpp>
 
 namespace stan {
 

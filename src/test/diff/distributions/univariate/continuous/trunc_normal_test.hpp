@@ -1,7 +1,7 @@
 // Arguments: Double, Double, Double, Double, Double
 #include <stan/prob/distributions/univariate/continuous/trunc_normal.hpp>
 
-#include <stan/math/functions/Phi.hpp>
+#include <stan/math/scalar/Phi.hpp>
 
 using std::vector;
 using std::numeric_limits;

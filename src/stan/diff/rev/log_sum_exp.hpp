@@ -9,7 +9,7 @@
 #include <stan/diff/rev/op/vector_vari.hpp>
 #include <stan/diff/rev/operator_greater_than.hpp>
 #include <stan/diff/rev/operator_not_equal.hpp>
-#include <stan/math/functions/log_sum_exp.hpp>
+#include <stan/math/scalar/log_sum_exp.hpp>
 
 namespace stan {
   namespace diff {

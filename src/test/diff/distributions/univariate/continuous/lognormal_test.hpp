@@ -1,7 +1,7 @@
 // Arguments: Doubles, Doubles, Doubles
 #include <stan/prob/distributions/univariate/continuous/lognormal.hpp>
 
-#include <stan/math/functions/square.hpp>
+#include <stan/math/scalar/square.hpp>
 #include <stan/math/constants.hpp>
 
 using std::vector;

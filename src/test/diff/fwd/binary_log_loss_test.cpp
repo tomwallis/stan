@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include <stan/diff/fwd.hpp>
-#include <stan/math/functions/binary_log_loss.hpp>
+#include <stan/math/scalar/binary_log_loss.hpp>
 
 TEST(AgradFvar, binary_log_loss) {
   using stan::diff::fvar;

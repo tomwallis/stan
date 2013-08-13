@@ -3,7 +3,7 @@
 
 #include <stan/diff/fwd/fvar.hpp>
 #include <stan/meta/traits.hpp>
-#include <stan/math/functions/log_inv_logit.hpp>
+#include <stan/math/scalar/log_inv_logit.hpp>
 
 namespace stan{
 

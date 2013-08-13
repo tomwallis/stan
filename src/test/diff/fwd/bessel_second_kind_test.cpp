@@ -2,7 +2,7 @@
 #include <stan/diff/fwd.hpp>
 #include <stan/diff/rev.hpp>
 #include <test/diff/util.hpp>
-#include <stan/math/functions/bessel_second_kind.hpp>
+#include <stan/math/scalar/bessel_second_kind.hpp>
 
 TEST(AgradFvar, bessel_second_kind) {
   using stan::diff::fvar;

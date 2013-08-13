@@ -3,7 +3,7 @@
 
 #include <stan/diff/rev/var.hpp>
 #include <stan/diff/rev/op/dv_vari.hpp>
-#include <stan/math/functions/modified_bessel_first_kind.hpp>
+#include <stan/math/scalar/modified_bessel_first_kind.hpp>
 
 namespace stan {
   namespace diff {

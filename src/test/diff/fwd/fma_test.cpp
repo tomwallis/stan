@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include <stan/diff/fwd.hpp>
-#include <stan/math/functions/fma.hpp>
+#include <stan/math/scalar/fma.hpp>
 
 TEST(AgradFvar, fma) { 
   using stan::diff::fvar;

@@ -4,7 +4,7 @@
 #include <valarray>
 #include <stan/diff/rev/var.hpp>
 #include <stan/diff/rev/op/v_vari.hpp>
-#include <stan/math/functions/inv_sqrt.hpp>
+#include <stan/math/scalar/inv_sqrt.hpp>
 
 namespace stan {
   namespace diff {

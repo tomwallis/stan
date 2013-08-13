@@ -2,7 +2,7 @@
 #include <test/diff/util.hpp>
 #include <gtest/gtest.h>
 #include <stan/diff.hpp>
-#include <stan/math/functions/Phi_approx.hpp>
+#include <stan/math/scalar/Phi_approx.hpp>
 
 TEST(AgradRev, Phi_approx) {
   using stan::diff::var;

@@ -2,7 +2,7 @@
 #define __STAN__DIFF__REV__INV_LOGIT_HPP__
 
 #include <stan/diff/rev/var.hpp>
-#include <stan/math/functions/inv_logit.hpp>
+#include <stan/math/scalar/inv_logit.hpp>
 #include <stan/diff/rev/op/v_vari.hpp>
 
 namespace stan {

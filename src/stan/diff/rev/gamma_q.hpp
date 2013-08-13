@@ -6,7 +6,7 @@
 #include <stan/diff/rev/op/vv_vari.hpp>
 #include <stan/diff/rev/op/dv_vari.hpp>
 #include <stan/diff/rev/op/vd_vari.hpp>
-#include <stan/math/functions/gamma_q.hpp>
+#include <stan/math/scalar/gamma_q.hpp>
 #include <boost/math/special_functions/gamma.hpp>
 #include <boost/math/special_functions/digamma.hpp>
 

@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include <stan/diff/fwd.hpp>
-#include <stan/math/functions/log_diff_exp.hpp>
+#include <stan/math/scalar/log_diff_exp.hpp>
 
 TEST(AgradFvar, log_diff_exp) {
   using stan::diff::fvar;

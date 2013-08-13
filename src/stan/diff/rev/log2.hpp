@@ -3,7 +3,7 @@
 
 #include <stan/diff/rev/var.hpp>
 #include <stan/diff/rev/op/v_vari.hpp>
-#include <stan/math/functions/log2.hpp>
+#include <stan/math/scalar/log2.hpp>
 #include <stan/math/constants.hpp>
 
 namespace stan {

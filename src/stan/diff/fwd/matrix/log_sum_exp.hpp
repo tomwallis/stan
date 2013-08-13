@@ -3,7 +3,7 @@
 
 #include <vector>
 #include <stan/diff/fwd/fvar.hpp>
-#include <stan/math/functions/log_sum_exp.hpp>
+#include <stan/math/scalar/log_sum_exp.hpp>
 #include <stan/math/matrix/Eigen.hpp>
 
 namespace stan{

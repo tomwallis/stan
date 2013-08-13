@@ -2,7 +2,7 @@
 #define __STAN__DIFF__REV__PHI_HPP__
 
 #include <stan/diff/rev/var.hpp>
-#include <stan/math/functions/Phi.hpp>
+#include <stan/math/scalar/Phi.hpp>
 #include <stan/diff/rev/op/v_vari.hpp>
 
 namespace stan {

@@ -4,7 +4,7 @@
 #include <stdexcept>
 #include <stan/math/error_handling.hpp>
 #include <stan/math/matrix.hpp>
-#include <stan/math/functions/value_of.hpp>
+#include <stan/math/scalar/value_of.hpp>
 #include <stan/diff.hpp>
 #include <test/diff/distributions/utility.hpp>
 

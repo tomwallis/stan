@@ -7,10 +7,10 @@
 
 #include <stan/prob/traits.hpp>
 #include <stan/math/error_handling.hpp>
-#include <stan/math/functions/inv_logit.hpp>
-#include <stan/math/functions/log1m.hpp>
-#include <stan/math/functions/log1m_exp.hpp>
-#include <stan/math/functions/log1p_exp.hpp>
+#include <stan/math/scalar/inv_logit.hpp>
+#include <stan/math/scalar/log1m.hpp>
+#include <stan/math/scalar/log1m_exp.hpp>
+#include <stan/math/scalar/log1p_exp.hpp>
 #include <stan/math/matrix_error_handling.hpp>
 #include <stan/math/error_handling.hpp>
 #include <stan/prob/constants.hpp>

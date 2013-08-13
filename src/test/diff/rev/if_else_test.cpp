@@ -1,7 +1,7 @@
 #include <stan/diff/rev/if_else.hpp>
 #include <test/diff/util.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/functions/if_else.hpp>
+#include <stan/math/scalar/if_else.hpp>
 
 TEST(AgradRev,if_else) {
   using stan::diff::var;

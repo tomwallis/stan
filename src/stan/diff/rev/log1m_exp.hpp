@@ -3,7 +3,7 @@
 
 #include <stan/diff/rev/var.hpp>
 #include <stan/diff/rev/op/v_vari.hpp>
-#include <stan/math/functions/log1m_exp.hpp>
+#include <stan/math/scalar/log1m_exp.hpp>
 #include <stan/diff/rev/calculate_chain.hpp>
 #include <boost/math/special_functions/expm1.hpp>
 

@@ -3,7 +3,7 @@
 
 #include <stan/diff/fwd/fvar.hpp>
 #include <stan/meta/traits.hpp>
-#include <stan/math/functions/bessel_first_kind.hpp>
+#include <stan/math/scalar/bessel_first_kind.hpp>
 
 namespace stan {
 

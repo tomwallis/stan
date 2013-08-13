@@ -4,7 +4,7 @@
 #include <stan/diff/rev/var.hpp>
 #include <stan/diff/rev/vari.hpp>
 #include <stan/diff/rev/operator_unary_negative.hpp>
-#include <stan/math/functions/is_uninitialized.hpp>
+#include <stan/math/scalar/is_uninitialized.hpp>
 
 namespace stan {
 

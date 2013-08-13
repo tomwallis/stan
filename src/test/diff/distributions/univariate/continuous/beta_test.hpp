@@ -1,8 +1,8 @@
 // Arguments: Doubles, Doubles, Doubles
 #include <stan/prob/distributions/univariate/continuous/beta.hpp>
 
-#include <stan/math/functions/log1m.hpp>
-#include <stan/math/functions/value_of.hpp>
+#include <stan/math/scalar/log1m.hpp>
+#include <stan/math/scalar/value_of.hpp>
 
 using std::vector;
 using std::numeric_limits;

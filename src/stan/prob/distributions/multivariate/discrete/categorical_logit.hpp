@@ -5,7 +5,7 @@
 #include <boost/math/tools/promotion.hpp>
 #include <stan/math/error_handling.hpp>
 #include <stan/math/matrix/log_softmax.hpp>
-#include <stan/math/functions/log_sum_exp.hpp>
+#include <stan/math/scalar/log_sum_exp.hpp>
 #include <stan/math/matrix/log_sum_exp.hpp>
 #include <stan/math/matrix/sum.hpp>
 #include <stan/prob/traits.hpp>

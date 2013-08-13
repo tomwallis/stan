@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include <stan/diff/fwd.hpp>
 #include <boost/math/special_functions/digamma.hpp>
-#include <stan/math/functions/lbeta.hpp>
+#include <stan/math/scalar/lbeta.hpp>
 
 TEST(AgradFvar, lbeta) {
   using stan::diff::fvar;

@@ -2,7 +2,7 @@
 #include <test/diff/util.hpp>
 #include <gtest/gtest.h>
 #include <stan/diff.hpp>
-#include <stan/math/functions/fdim.hpp>
+#include <stan/math/scalar/fdim.hpp>
 
 TEST(AgradRev,fdim_vv) {
   AVAR a = 3.0;

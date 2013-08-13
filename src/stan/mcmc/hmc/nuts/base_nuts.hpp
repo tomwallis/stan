@@ -3,7 +3,7 @@
 
 #include <math.h>
 #include <boost/math/special_functions/fpclassify.hpp>
-#include <stan/math/functions/min.hpp>
+#include <stan/math/scalar/min.hpp>
 #include <stan/mcmc/hmc/base_hmc.hpp>
 #include <stan/mcmc/hmc/hamiltonians/ps_point.hpp>
 

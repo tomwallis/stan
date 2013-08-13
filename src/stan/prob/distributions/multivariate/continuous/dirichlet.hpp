@@ -9,7 +9,7 @@
 #include <stan/math/matrix_error_handling.hpp>
 #include <stan/math/error_handling.hpp>
 #include <stan/prob/traits.hpp>
-#include <stan/math/functions/multiply_log.hpp>
+#include <stan/math/scalar/multiply_log.hpp>
 
 namespace stan {
 

@@ -3,7 +3,7 @@
 
 #include <stan/diff/fwd/fvar.hpp>
 #include <stan/meta/traits.hpp>
-#include <stan/math/functions/binary_log_loss.hpp>
+#include <stan/math/scalar/binary_log_loss.hpp>
 
 namespace stan{
 

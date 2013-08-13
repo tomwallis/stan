@@ -1,7 +1,7 @@
 #include <stan/diff/rev/ibeta.hpp>
 #include <test/diff/util.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/functions/ibeta.hpp>
+#include <stan/math/scalar/ibeta.hpp>
 #include <boost/math/special_functions/beta.hpp>
 
 TEST(AgradRev,ibeta_vvv) {

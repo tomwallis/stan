@@ -1,8 +1,8 @@
 // Arguments: Ints, Ints, Doubles, Doubles
 #include <stan/prob/distributions/univariate/discrete/beta_binomial.hpp>
 
-#include <stan/math/functions/lbeta.hpp>
-#include <stan/math/functions/binomial_coefficient_log.hpp>
+#include <stan/math/scalar/lbeta.hpp>
+#include <stan/math/scalar/binomial_coefficient_log.hpp>
 
 using std::vector;
 using std::numeric_limits;

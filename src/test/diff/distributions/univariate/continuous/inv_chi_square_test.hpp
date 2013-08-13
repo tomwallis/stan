@@ -1,7 +1,7 @@
 // Arguments: Doubles, Doubles
 #include <stan/prob/distributions/univariate/continuous/inv_chi_square.hpp>
 
-#include <stan/math/functions/multiply_log.hpp>
+#include <stan/math/scalar/multiply_log.hpp>
 
 using std::vector;
 using std::numeric_limits;

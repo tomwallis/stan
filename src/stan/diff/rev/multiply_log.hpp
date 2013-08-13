@@ -7,7 +7,7 @@
 #include <stan/diff/rev/op/vd_vari.hpp>
 #include <stan/diff/rev/op/dv_vari.hpp>
 #include <stan/diff/rev/log.hpp>
-#include <stan/math/functions/multiply_log.hpp>
+#include <stan/math/scalar/multiply_log.hpp>
 
 namespace stan {
   namespace diff {

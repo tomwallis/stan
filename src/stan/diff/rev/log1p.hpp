@@ -5,7 +5,7 @@
 #include <stan/diff/rev/var.hpp>
 #include <stan/diff/rev/op/v_vari.hpp>
 #include <stan/math/constants.hpp>
-#include <stan/math/functions/log1p.hpp>
+#include <stan/math/scalar/log1p.hpp>
 
 namespace stan {
   namespace diff {

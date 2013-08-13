@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include <stan/diff/fwd.hpp>
-#include <stan/math/functions/square.hpp>
+#include <stan/math/scalar/square.hpp>
 
 TEST(AgradFvar, square) {
   using stan::diff::fvar;

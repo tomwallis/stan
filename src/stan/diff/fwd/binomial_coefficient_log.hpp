@@ -4,7 +4,7 @@
 #include <stan/diff/fwd/fvar.hpp>
 #include <stan/meta/traits.hpp>
 #include <boost/math/special_functions/digamma.hpp>
-#include <stan/math/functions/binomial_coefficient_log.hpp>
+#include <stan/math/scalar/binomial_coefficient_log.hpp>
 
 namespace stan{
 

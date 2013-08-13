@@ -3,7 +3,7 @@
 
 #include <stan/diff/fwd/fvar.hpp>
 #include <stan/meta/traits.hpp>
-#include <stan/math/functions/gamma_q.hpp>
+#include <stan/math/scalar/gamma_q.hpp>
 
 namespace stan{
 

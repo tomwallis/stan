@@ -4,7 +4,7 @@
 #include <limits>
 #include <vector>
 #include <boost/math/tools/promotion.hpp>
-#include <stan/math/functions/log1p.hpp>
+#include <stan/math/scalar/log1p.hpp>
 #include <stan/math/matrix/Eigen.hpp>
 
 

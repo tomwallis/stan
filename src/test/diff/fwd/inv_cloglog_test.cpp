@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include <stan/diff/fwd.hpp>
-#include <stan/math/functions/inv_cloglog.hpp>
+#include <stan/math/scalar/inv_cloglog.hpp>
 
 TEST(AgradFvar, invCLogLog) {
   using stan::diff::fvar;

@@ -3,7 +3,7 @@
 
 #include <stan/diff/rev/var.hpp>
 #include <stan/diff/rev/precomp_v_vari.hpp>
-#include <stan/math/functions/inv_logit.hpp>
+#include <stan/math/scalar/inv_logit.hpp>
 
 namespace stan {
   namespace diff {

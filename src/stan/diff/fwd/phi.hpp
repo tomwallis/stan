@@ -3,7 +3,7 @@
 
 #include <stan/diff/fwd/fvar.hpp>
 #include <stan/meta/traits.hpp>
-#include <stan/math/functions/Phi.hpp>
+#include <stan/math/scalar/Phi.hpp>
 #include <stan/math/constants.hpp>
 
 namespace stan{

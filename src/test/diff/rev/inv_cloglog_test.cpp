@@ -3,7 +3,7 @@
 #include <stan/diff/rev/operator_unary_negative.hpp>
 #include <stan/diff/rev/operator_subtraction.hpp>
 
-#include <stan/math/functions/inv_cloglog.hpp>
+#include <stan/math/scalar/inv_cloglog.hpp>
 #include <test/diff/util.hpp>
 #include <gtest/gtest.h>
 

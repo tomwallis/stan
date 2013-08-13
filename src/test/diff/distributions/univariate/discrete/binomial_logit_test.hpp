@@ -1,11 +1,11 @@
 // Arguments: Ints, Ints, Doubles
 #include <stan/prob/distributions/univariate/discrete/binomial.hpp>
 
-#include <stan/math/functions/logit.hpp>
-#include <stan/math/functions/binomial_coefficient_log.hpp>
-#include <stan/math/functions/log1m.hpp>
-#include <stan/math/functions/multiply_log.hpp>
-#include <stan/math/functions/inv_logit.hpp>
+#include <stan/math/scalar/logit.hpp>
+#include <stan/math/scalar/binomial_coefficient_log.hpp>
+#include <stan/math/scalar/log1m.hpp>
+#include <stan/math/scalar/multiply_log.hpp>
+#include <stan/math/scalar/inv_logit.hpp>
 
 using std::vector;
 using std::numeric_limits;
