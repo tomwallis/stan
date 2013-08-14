@@ -1,7 +1,7 @@
-#include "stan/math/scalar/bessel_second_kind.hpp"
+#include <stan/math/scalar/bessel_second_kind.hpp>
 #include <gtest/gtest.h>
 
-TEST(MathFunctions, bessel_second_kind) {
+TEST(MathScalar, bessel_second_kind) {
   using stan::math::bessel_second_kind;
   
   EXPECT_FLOAT_EQ(-0.01694073932506499190363513444715321824049258989801, 

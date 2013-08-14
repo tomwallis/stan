@@ -1,5 +1,5 @@
 #include <stan/diff/rev/var_stack.hpp>
-#include <stan/diff/rev/operator_multiplication.hpp>
+#include <stan/diff/rev/scalar/operator_multiplication.hpp>
 #include <test/diff/util.hpp>
 #include <gtest/gtest.h>
 

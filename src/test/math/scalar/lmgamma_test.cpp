@@ -1,4 +1,4 @@
-#include "stan/math/scalar/lmgamma.hpp"
+#include <stan/math/scalar/lmgamma.hpp>
 #include <gtest/gtest.h>
 
 TEST(MathsSpecialFunctions, lmgamma) {

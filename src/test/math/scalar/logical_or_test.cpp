@@ -1,7 +1,7 @@
-#include "stan/math/scalar/logical_or.hpp"
+#include <stan/math/scalar/logical_or.hpp>
 #include <gtest/gtest.h>
 
-TEST(MathFunctions,logical_or) {
+TEST(MathScalar,logical_or) {
   using stan::math::logical_or;
   EXPECT_TRUE(logical_or(1,0));
   EXPECT_TRUE(logical_or(0,1));

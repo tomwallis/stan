@@ -1,4 +1,4 @@
-#include "stan/math/scalar/log_diff_exp.hpp"
+#include <stan/math/scalar/log_diff_exp.hpp>
 #include <gtest/gtest.h>
 
 void test_log_diff_exp(double a, double b) {
@@ -9,7 +9,7 @@ void test_log_diff_exp(double a, double b) {
                   log_diff_exp(a,b));
 }
 
-TEST(MathFunctions, log_diff_exp) {
+TEST(MathScalar, log_diff_exp) {
   using stan::math::log_diff_exp;
   test_log_diff_exp(3.0,2.0);
   test_log_diff_exp(4.0,1.0);

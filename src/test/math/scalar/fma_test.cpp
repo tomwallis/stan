@@ -1,7 +1,7 @@
-#include "stan/math/scalar/fma.hpp"
+#include <stan/math/scalar/fma.hpp>
 #include <gtest/gtest.h>
 
-TEST(MathFunctions, fma) {
+TEST(MathScalar, fma) {
   using stan::math::fma;
   
   EXPECT_FLOAT_EQ(5.0, fma(1.0,2.0,3.0));

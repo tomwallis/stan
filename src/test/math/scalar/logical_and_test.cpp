@@ -1,7 +1,7 @@
-#include "stan/math/scalar/logical_and.hpp"
+#include <stan/math/scalar/logical_and.hpp>
 #include <gtest/gtest.h>
 
-TEST(MathFunctions,logical_and) {
+TEST(MathScalar,logical_and) {
   using stan::math::logical_and;
   EXPECT_TRUE(logical_and(1,1));
   EXPECT_TRUE(logical_and(5.7,-1.9));

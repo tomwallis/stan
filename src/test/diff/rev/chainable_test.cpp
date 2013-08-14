@@ -11,6 +11,6 @@ namespace chainable_test {
   };
 }
 
-TEST(AgradRevChainable,ctorThrow) {
+TEST(DiffRevScalarChainable,ctorThrow) {
   EXPECT_THROW(chainable_test::mock_chainable(), std::invalid_argument);
 }

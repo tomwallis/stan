@@ -9,7 +9,7 @@ void test_log_sum_exp(double a, double b) {
                   log_sum_exp(a,b));
 }
 
-TEST(MathFunctions, log_sum_exp_2) {
+TEST(MathScalar, log_sum_exp_2) {
   using stan::math::log_sum_exp;
   test_log_sum_exp(1.0,2.0);
   test_log_sum_exp(1.0,1.0);

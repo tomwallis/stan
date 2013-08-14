@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include <stan/diff/fwd.hpp>
 #include <boost/math/special_functions/gamma.hpp>
-#include <stan/diff/rev/gamma_q.hpp>
+#include <stan/diff/rev/scalar/gamma_q.hpp>
 #include <stan/diff/rev.hpp>
 #include <test/diff/util.hpp>
 

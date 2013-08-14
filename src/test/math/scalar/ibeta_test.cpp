@@ -1,7 +1,7 @@
-#include "stan/math/scalar/ibeta.hpp"
+#include <stan/math/scalar/ibeta.hpp>
 #include <gtest/gtest.h>
 
-TEST(MathFunctions, ibeta) {
+TEST(MathScalar, ibeta) {
   using stan::math::ibeta;
   
   EXPECT_FLOAT_EQ(0.0, ibeta(0.5, 0.5, 0.0))  << "reasonable values for a, b, x";

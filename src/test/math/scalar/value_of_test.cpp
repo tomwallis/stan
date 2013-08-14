@@ -1,7 +1,7 @@
 #include <stan/math/scalar/value_of.hpp>
 #include <gtest/gtest.h>
 
-TEST(MathFunctions, value_of) {
+TEST(MathScalar, value_of) {
   using stan::math::value_of;
   double x = 5.0;
   EXPECT_FLOAT_EQ(5.0,value_of(x));

@@ -1,8 +1,8 @@
-#include "stan/math/scalar/log_inv_logit.hpp"
-#include "stan/math/scalar/inv_logit.hpp"
+#include <stan/math/scalar/log_inv_logit.hpp>
+#include <stan/math/scalar/inv_logit.hpp>
 #include <gtest/gtest.h>
 
-TEST(MathFunctions, log_inv_logit) {
+TEST(MathScalar, log_inv_logit) {
   using stan::math::log_inv_logit;
   using std::log;
   using stan::math::inv_logit;

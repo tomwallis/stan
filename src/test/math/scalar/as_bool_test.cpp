@@ -1,7 +1,7 @@
-#include "stan/math/scalar/as_bool.hpp"
+#include <stan/math/scalar/as_bool.hpp>
 #include <gtest/gtest.h>
 
-TEST(MathFunctions,as_bool) {
+TEST(MathScalar,as_bool) {
   using stan::math::as_bool;
   EXPECT_TRUE(as_bool(1));
   EXPECT_TRUE(as_bool(1.7));

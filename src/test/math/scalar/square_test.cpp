@@ -1,4 +1,4 @@
-#include "stan/math/scalar/square.hpp"
+#include <stan/math/scalar/square.hpp>
 #include <gtest/gtest.h>
 
 TEST(MathsSpecialFunctions, square) {

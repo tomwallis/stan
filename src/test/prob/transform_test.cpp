@@ -4,6 +4,7 @@
 #include <gtest/gtest.h>
 
 #include <stan/diff.hpp>
+#include <stan/diff/rev/jacobian.hpp>
 #include <stan/prob/transform.hpp>
 #include <stan/math/matrix/determinant.hpp>
 

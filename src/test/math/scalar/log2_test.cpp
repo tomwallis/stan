@@ -1,13 +1,13 @@
-#include "stan/math/scalar/log2.hpp"
+#include <stan/math/scalar/log2.hpp>
 #include <gtest/gtest.h>
 
-TEST(MathFunctions, log2_fun) {
+TEST(MathScalar, log2_fun) {
   using stan::math::log2;
 
   EXPECT_FLOAT_EQ(std::log(2.0), log2());
 }
 
-TEST(MathFunctionsLog2, log2) {
+TEST(MathScalarLog2, log2) {
   using stan::math::log2;
 
   EXPECT_FLOAT_EQ(1.0, log2(2.0));

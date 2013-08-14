@@ -1,4 +1,4 @@
-#include "stan/math/scalar/logical_neq.hpp"
+#include <stan/math/scalar/logical_neq.hpp>
 #include <gtest/gtest.h>
 
 TEST(MathSpecialFunctions,logical_neq) {

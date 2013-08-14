@@ -1,4 +1,4 @@
-#include "stan/math/scalar/inv_sqrt.hpp"
+#include <stan/math/scalar/inv_sqrt.hpp>
 #include <gtest/gtest.h>
 #include <stan/math/constants.hpp>
 

@@ -1,7 +1,7 @@
 #include <stan/math/scalar/step.hpp>
 #include <gtest/gtest.h>
 
-TEST(MathFunctions, step_double) {
+TEST(MathScalar, step_double) {
   using stan::math::step;
   
   EXPECT_EQ(1, step(3.7));
@@ -9,7 +9,7 @@ TEST(MathFunctions, step_double) {
   EXPECT_EQ(0, step(-2.93));
 }
 
-TEST(MathFunctions, step_int) {
+TEST(MathScalar, step_int) {
   using stan::math::step;
 
   EXPECT_EQ(1, step(int(4)));

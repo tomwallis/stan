@@ -1,7 +1,7 @@
-#include "stan/math/scalar/falling_factorial.hpp"
+#include <stan/math/scalar/falling_factorial.hpp>
 #include <gtest/gtest.h>
 
-TEST(MathFunctions, falling_factorial) {
+TEST(MathScalar, falling_factorial) {
   using stan::math::falling_factorial;
   
   EXPECT_FLOAT_EQ(4, falling_factorial(4.0,3));

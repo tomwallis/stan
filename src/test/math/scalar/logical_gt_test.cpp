@@ -1,7 +1,7 @@
-#include "stan/math/scalar/logical_gt.hpp"
+#include <stan/math/scalar/logical_gt.hpp>
 #include <gtest/gtest.h>
 
-TEST(MathFunctions,logical_gt) {
+TEST(MathScalar,logical_gt) {
   using stan::math::logical_gt;
   EXPECT_TRUE(logical_gt(1,0));
   EXPECT_TRUE(logical_gt(2,1.00));

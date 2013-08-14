@@ -13,7 +13,7 @@
 #include <stan/diff/rev/matrix/typedefs.hpp>
 #include <stan/diff/rev/matrix/to_var.hpp>
 #include <stan/diff/rev/matrix/dot_product.hpp>
-#include <stan/diff/rev/operator_multiplication.hpp>
+#include <stan/diff/rev/scalar/operator_multiplication.hpp>
 
 namespace stan {
   namespace diff {

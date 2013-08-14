@@ -1,7 +1,7 @@
-#include "stan/math/scalar/rising_factorial.hpp"
+#include <stan/math/scalar/rising_factorial.hpp>
 #include <gtest/gtest.h>
 
-TEST(MathFunctions, rising_factorial) {
+TEST(MathScalar, rising_factorial) {
   using stan::math::rising_factorial;
   
   EXPECT_FLOAT_EQ(120, rising_factorial(4.0,3));

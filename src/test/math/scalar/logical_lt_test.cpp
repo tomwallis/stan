@@ -1,7 +1,7 @@
-#include "stan/math/scalar/logical_lt.hpp"
+#include <stan/math/scalar/logical_lt.hpp>
 #include <gtest/gtest.h>
 
-TEST(MathFunctions,logical_lt) {
+TEST(MathScalar,logical_lt) {
   using stan::math::logical_lt;
   EXPECT_TRUE(logical_lt(0,1));
   EXPECT_TRUE(logical_lt(1.0,2.0));

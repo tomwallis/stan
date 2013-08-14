@@ -1,7 +1,7 @@
-#include "stan/math/scalar/if_else.hpp"
+#include <stan/math/scalar/if_else.hpp>
 #include <gtest/gtest.h>
 
-TEST(MathFunctions, if_else) {
+TEST(MathScalar, if_else) {
   using stan::math::if_else;
   unsigned int c = 5;
   double x = 1.0;
@@ -24,7 +24,7 @@ TEST(MathFunctions, if_else) {
   EXPECT_FLOAT_EQ(12.3,if_else(false,1,12.3));
 }
 
-TEST(MathFunctions, if_else_promote) {
+TEST(MathScalar, if_else_promote) {
   using stan::math::if_else;
   double x = 2.5;
   int y = -1;

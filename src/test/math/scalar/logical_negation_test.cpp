@@ -1,7 +1,7 @@
-#include "stan/math/scalar/logical_negation.hpp"
+#include <stan/math/scalar/logical_negation.hpp>
 #include <gtest/gtest.h>
 
-TEST(MathFunctions,logical_negation) {
+TEST(MathScalar,logical_negation) {
   using stan::math::logical_negation;
   EXPECT_TRUE(logical_negation(0));
   EXPECT_TRUE(logical_negation(0.0));

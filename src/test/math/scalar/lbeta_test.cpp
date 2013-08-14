@@ -1,7 +1,7 @@
-#include "stan/math/scalar/lbeta.hpp"
+#include <stan/math/scalar/lbeta.hpp>
 #include <gtest/gtest.h>
 
-TEST(MathFunctions, lbeta) {
+TEST(MathScalar, lbeta) {
   using stan::math::lbeta;
   
   EXPECT_FLOAT_EQ(0.0, lbeta(1.0,1.0));

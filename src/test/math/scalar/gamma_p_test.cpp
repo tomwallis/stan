@@ -1,7 +1,7 @@
-#include "stan/math/scalar/gamma_p.hpp"
+#include <stan/math/scalar/gamma_p.hpp>
 #include <gtest/gtest.h>
 
-TEST(MathFunctions, gamma_p) {
+TEST(MathScalar, gamma_p) {
   using stan::math::gamma_p;
   
   EXPECT_FLOAT_EQ(0.63212055, gamma_p(1.0,1.0));

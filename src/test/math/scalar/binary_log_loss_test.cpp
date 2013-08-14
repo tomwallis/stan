@@ -1,7 +1,7 @@
-#include "stan/math/scalar/binary_log_loss.hpp"
+#include <stan/math/scalar/binary_log_loss.hpp>
 #include <gtest/gtest.h>
 
-TEST(MathFunctions, binary_log_loss) {
+TEST(MathScalar, binary_log_loss) {
   EXPECT_FLOAT_EQ(0.0, stan::math::binary_log_loss(0,0.0));
   EXPECT_FLOAT_EQ(0.0, stan::math::binary_log_loss(1,1.0));
   EXPECT_FLOAT_EQ(-log(0.5), stan::math::binary_log_loss(0,0.5));

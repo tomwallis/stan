@@ -1,7 +1,7 @@
-#include "stan/math/scalar/exp2.hpp"
+#include <stan/math/scalar/exp2.hpp>
 #include <gtest/gtest.h>
 
-TEST(MathFunctions, exp2_double) {
+TEST(MathScalar, exp2_double) {
   using stan::math::exp2;
 
   EXPECT_FLOAT_EQ(1.0, exp2(0.0));
@@ -14,7 +14,7 @@ TEST(MathFunctions, exp2_double) {
   EXPECT_FLOAT_EQ(0.125, exp2(-3.0));
 }
 
-TEST(MathFunctions, exp2_int) {
+TEST(MathScalar, exp2_int) {
   using stan::math::exp2;
 
   // promotes results to double

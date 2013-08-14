@@ -1,7 +1,7 @@
-#include "stan/math/scalar/logical_eq.hpp"
+#include <stan/math/scalar/logical_eq.hpp>
 #include <gtest/gtest.h>
 
-TEST(MathFunctions,logical_eq) {
+TEST(MathScalar,logical_eq) {
   using stan::math::logical_eq;
   EXPECT_TRUE(logical_eq(1,1));
   EXPECT_TRUE(logical_eq(5.7,5.7));

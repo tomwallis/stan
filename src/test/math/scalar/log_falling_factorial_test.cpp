@@ -1,7 +1,7 @@
-#include "stan/math/scalar/log_falling_factorial.hpp"
+#include <stan/math/scalar/log_falling_factorial.hpp>
 #include <gtest/gtest.h>
 
-TEST(MathFunctions, log_falling_factorial) {
+TEST(MathScalar, log_falling_factorial) {
   using stan::math::log_falling_factorial;
   
   EXPECT_FLOAT_EQ(std::log(4.0), log_falling_factorial(4.0,3));

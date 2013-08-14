@@ -1,7 +1,7 @@
-#include "stan/math/scalar/multiply_log.hpp"
+#include <stan/math/scalar/multiply_log.hpp>
 #include <gtest/gtest.h>
 
-TEST(MathFunctions, multiply_log) {
+TEST(MathScalar, multiply_log) {
   double a = 2.0;
   double b = 3.0;
   EXPECT_FLOAT_EQ(a * log(b), stan::math::multiply_log(a,b));

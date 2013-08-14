@@ -3,12 +3,12 @@
 
 #include <stan/diff/rev/var.hpp>
 #include <stan/diff/rev/calculate_chain.hpp>
-#include <stan/diff/rev/op/vv_vari.hpp>
-#include <stan/diff/rev/op/vd_vari.hpp>
-#include <stan/diff/rev/op/dv_vari.hpp>
-#include <stan/diff/rev/op/matrix_vari.hpp>
-#include <stan/diff/rev/operator_greater_than.hpp>
-#include <stan/diff/rev/operator_not_equal.hpp>
+#include <stan/diff/rev/scalar/op/vv_vari.hpp>
+#include <stan/diff/rev/scalar/op/vd_vari.hpp>
+#include <stan/diff/rev/scalar/op/dv_vari.hpp>
+#include <stan/diff/rev/scalar/op/matrix_vari.hpp>
+#include <stan/diff/rev/scalar/operator_greater_than.hpp>
+#include <stan/diff/rev/scalar/operator_not_equal.hpp>
 #include <stan/math/scalar/log_sum_exp.hpp>
 #include <stan/math/matrix/Eigen.hpp>
 

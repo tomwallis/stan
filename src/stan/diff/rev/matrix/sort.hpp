@@ -3,9 +3,9 @@
 
 #include <valarray>
 #include <stan/diff/rev/var.hpp>
-#include <stan/diff/rev/op/v_vari.hpp>
-#include <stan/diff/rev/operator_greater_than.hpp>
-#include <stan/diff/rev/operator_less_than.hpp>
+#include <stan/diff/rev/scalar/op/v_vari.hpp>
+#include <stan/diff/rev/scalar/operator_greater_than.hpp>
+#include <stan/diff/rev/scalar/operator_less_than.hpp>
 #include <vector>
 #include <stan/math/matrix/Eigen.hpp>
 #include <algorithm>    // std::sort

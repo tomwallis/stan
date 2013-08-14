@@ -1,6 +1,9 @@
+#include <stan/diff/rev/matrix/dot_product.hpp>
 #include <gtest/gtest.h>
 #include <test/diff/util.hpp>
 #include <stan/math/matrix.hpp>
+#include <stan/diff/rev/scalar.hpp>
+#include <stan/diff/rev/jacobian.hpp>
 #include <stan/diff/rev/matrix.hpp>
 
 TEST(AgradRevMatrix, dot_product_vv) {

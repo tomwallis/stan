@@ -1,4 +1,4 @@
-#include "stan/math/scalar/owens_t.hpp"
+#include <stan/math/scalar/owens_t.hpp>
 #include <gtest/gtest.h>
 #include <boost/math/special_functions/owens_t.hpp>
 

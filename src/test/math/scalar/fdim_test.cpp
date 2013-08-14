@@ -1,7 +1,7 @@
-#include "stan/math/scalar/fdim.hpp"
+#include <stan/math/scalar/fdim.hpp>
 #include <gtest/gtest.h>
 
-TEST(MathFunctions, fdim_double) {
+TEST(MathScalar, fdim_double) {
   using stan::math::fdim;
 
   EXPECT_FLOAT_EQ(1.0, fdim(3.0,2.0));
@@ -10,7 +10,7 @@ TEST(MathFunctions, fdim_double) {
   EXPECT_FLOAT_EQ(2.5, fdim(4.5,2.0));
 }
 
-TEST(MathFunctions, fdim_int) {
+TEST(MathScalar, fdim_int) {
   using stan::math::fdim;
   
   // promotes results to double

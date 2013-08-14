@@ -1,4 +1,4 @@
-#include "stan/math/scalar/log1m_exp.hpp"
+#include <stan/math/scalar/log1m_exp.hpp>
 #include <gtest/gtest.h>
 
 TEST(MathsSpecialFunctions, log1m_exp) {

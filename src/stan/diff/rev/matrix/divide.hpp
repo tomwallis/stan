@@ -7,7 +7,7 @@
 #include <stan/math/matrix/validate_multiplicable.hpp>
 #include <stan/math/matrix/validate_square.hpp>
 #include <stan/diff/rev/var.hpp>
-#include <stan/diff/rev/operator_division.hpp>
+#include <stan/diff/rev/scalar/operator_division.hpp>
 #include <stan/diff/rev/matrix/to_var.hpp>
 #include <stan/diff/rev/matrix/typedefs.hpp>
 

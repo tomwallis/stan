@@ -3,8 +3,8 @@
 #include <test/diff/util.hpp>
 #include <stan/math/matrix/determinant.hpp>
 #include <stan/math/matrix/log_determinant_spd.hpp>
-#include <stan/diff/rev/fabs.hpp>
-#include <stan/diff/rev/log.hpp>
+#include <stan/diff/rev/scalar/fabs.hpp>
+#include <stan/diff/rev/scalar/log.hpp>
 
 TEST(AgradRevMatrix,log_determinant_spd_diff) {
   using stan::diff::matrix_v;

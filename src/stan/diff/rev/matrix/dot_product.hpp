@@ -12,7 +12,7 @@
 #include <stan/diff/rev/var.hpp>
 #include <stan/diff/rev/vari.hpp>
 #include <stan/diff/rev/matrix/typedefs.hpp>
-#include <stan/diff/rev/value_of.hpp>
+#include <stan/diff/rev/scalar/value_of.hpp>
 
 namespace stan {
   namespace diff {
