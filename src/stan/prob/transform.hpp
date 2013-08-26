@@ -195,30 +195,38 @@ namespace stan {
                 const size_t K,
                 T& log_prob) {
 
-      size_t k = 0; 
-      size_t i = 0;
-      T log_1cpc2;
-      double lead = K - 2.0; 
-      // no need to abs() because this Jacobian determinant 
-      // is strictly positive (and triangular)
-      // skip last row (odd indexing) because it adds nothing by design
-      typedef typename Eigen::Matrix<T,Eigen::Dynamic,1>::size_type size_type;
-      for (size_type j = 0; 
-           j < (CPCs.rows() - 1);
-           ++j) {
-        using stan::math::log1m;
-        using stan::math::square;
-        log_1cpc2 = log1m(square(CPCs[j]));
-        // derivative of correlation wrt CPC
-        log_prob += lead / 2.0 * log_1cpc2; 
-        i++;
-        if (i > K) {
-          k++;
-          i = k + 1;
-          lead = K - k - 1.0;
-        }
+      Eigen::Array<T,Eigen::Dynamic,1> temp;
+      Eigen::Array<T,Eigen::Dynamic,1> acc(K-1);
+      Eigen::Array<T,Eigen::Dynamic,1> acc_pull;
+      Eigen::Array<T,Eigen::Dynamic,1> jacobians((K * K) / 2 - K + 1);
+
+      // Cholesky factor of correlation matrix
+      Eigen::Array<T,Eigen::Dynamic,Eigen::Dynamic> L(K,K);
+      L.setZero();
+
+      size_t position = 0;
+      size_t pull = K - 1;
+      size_t jac_position = 0;
+      size_t jac_pull = K - 2;
+
+      L(0,0) = 1.0;
+      L.col(0).tail(pull) = temp = CPCs.head(pull);
+      acc = (1.0 - temp.square()).sqrt();
+      for(size_t i = 1; i < (K - 1); i++) {
+        position += pull;
+        pull--;
+        temp = CPCs.segment(position, pull);
+        L(i,i) = sqrt(acc(i-1));
+        acc_pull = acc.tail(pull);
+        jacobians.segment(jac_position,jac_pull) = acc_pull.log();
+        jac_position += jac_pull;
+        jac_pull--;
+        L.col(i).tail(pull) = temp * acc_pull;
+        acc.tail(pull) *= (1.0 - temp.square()).sqrt();
       }
-      return read_corr_L(CPCs, K);
+      L(K-1,K-1) = sqrt(acc(K-2));
+      log_prob += stan::math::sum(jacobians);
+      return L.matrix();
     }
 
     /**
@@ -291,7 +299,7 @@ namespace stan {
                T& log_prob) {
       size_t K = sds.rows();
       // adjust due to transformation from correlations to covariances
-      log_prob += (sds.log().sum() + stan::math::LOG_2) * K;
+      log_prob += (stan::math::sum(sds.log()) + stan::math::LOG_2) * K;
       return sds.matrix().asDiagonal() * read_corr_L(CPCs, K, log_prob);
     }
 
