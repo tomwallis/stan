@@ -188,6 +188,7 @@ namespace stan {
      * partial correlations.
      * @tparam T Type of underlying scalar.  
      */
+
     template <typename T>
     Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic>
     read_corr_L(const Eigen::Array<T,Eigen::Dynamic,1>& CPCs,
@@ -238,18 +239,41 @@ namespace stan {
      * @return Correlation matrix for specified partial correlations.
      * @tparam T Type of underlying scalar.  
      */
+
     template <typename T>
     Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic>
     read_corr_matrix(const Eigen::Array<T,Eigen::Dynamic,1>& CPCs,
                      const size_t K,
                      T& log_prob) {
-
+      size_t k = 0; 
+      size_t i = 0;
+      T log_1cpc2;
+      double lead = K - 2.0; 
+      // no need to abs() because this Jacobian determinant 
+      // is strictly positive (and triangular)
+      // skip last row (odd indexing) because it adds nothing by design
+      typedef typename Eigen::Matrix<T,Eigen::Dynamic,1>::size_type size_type;
+      for (size_type j = 0; 
+           j < (CPCs.rows() - 1);
+           ++j) {
+        using stan::math::log1m;
+        using stan::math::square;
+        log_1cpc2 = log1m(square(CPCs[j]));
+        // derivative of correlation wrt CPC
+        log_prob += lead / 2.0 * log_1cpc2; 
+        i++;
+        if (i > K) {
+          k++;
+          i = k + 1;
+          lead = K - k - 1.0;
+        }
+      }
       Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic> L 
-        = read_corr_L(CPCs, K, log_prob);
+        = read_corr_L(CPCs, K);
       using stan::math::multiply_lower_tri_self_transpose;
       return multiply_lower_tri_self_transpose(L);
     }
-    
+
     /** 
      * This is the function that should be called prior to evaluating
      * the density of any elliptical distribution
@@ -286,10 +310,9 @@ namespace stan {
                     const Eigen::Array<T,Eigen::Dynamic,1>& sds, 
                     T& log_prob) {
 
-      Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic> L 
-        = read_cov_L(CPCs, sds, log_prob);
-      using stan::math::multiply_lower_tri_self_transpose;
-      return multiply_lower_tri_self_transpose(L);
+      return sds.matrix().asDiagonal() *
+             read_corr_matrix(CPCs, sds.rows(), log_prob) *
+             sds.matrix().asDiagonal();
     }
 
     /** 
@@ -304,11 +327,8 @@ namespace stan {
     read_cov_matrix(const Eigen::Array<T,Eigen::Dynamic,1>& CPCs, 
                     const Eigen::Array<T,Eigen::Dynamic,1>& sds) {
 
-      size_t K = sds.rows();
-      Eigen::DiagonalMatrix<T,Eigen::Dynamic> D(K);
-      D.diagonal() = sds;
-      Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic> L 
-        = D * read_corr_L(CPCs, K);
+      Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic> L
+        = sds.matrix().asDiagonal() * read_corr_L(CPCs, sds.rows());
       using stan::math::multiply_lower_tri_self_transpose;
       return multiply_lower_tri_self_transpose(L);
     }
