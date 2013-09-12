@@ -326,6 +326,7 @@ for (size_t i = 0; i < base_types.size(); ++i) {
   add("head",expr_type(base_types[i],2U), expr_type(base_types[i],2U),INT_T);
   add("head",expr_type(base_types[i],3U), expr_type(base_types[i],3U),INT_T);
  }
+add("ho",MATRIX_T,expr_type(DOUBLE_T,1),VECTOR_T,DOUBLE_T);
 add("hypergeometric_log",DOUBLE_T, INT_T,INT_T,INT_T,INT_T);
 add("hypergeometric_rng",INT_T, INT_T,INT_T,INT_T);
 add_binary("hypot");
