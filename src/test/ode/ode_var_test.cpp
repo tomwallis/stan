@@ -37,9 +37,12 @@ struct push_back_state_and_time
   }
   
   void print() {
+    std::cout << "time,x_0,x_1" << std::endl;
     for (size_t n = 0; n < m_states.size(); n++) {
-      std::cout << m_times[n] << ": (" 
-                << m_states[n][0] << ", " << m_states[n][1] << ")" << std::endl;
+      std::cout << m_times[n].val()
+                << "," << m_states[n][0].val()
+                << "," << m_states[n][1].val()
+                << std::endl;
     }
   }
 };
