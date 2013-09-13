@@ -100,12 +100,12 @@ namespace stan {
       harm_osc<T> harm_osc(gamma);
 
       // integrate_const(make_dense_output(1.0e-6, 1.0e-6, 
-      //                                   runge_kutta_dopri5< vector<T>,
-      //                                                       T,
+      //                                    runge_kutta_dopri5< vector<T>,
+      //                                                        T,
       //                                                       vector<T>,
-      //                                                       T>() ) , 
-      //                 harm_osc, x0_state, times_start, times_end, dt,
-      //                 obs);
+      //                                                        T>() ) , 
+      //                  harm_osc, x0_state, times_start, times_end, dt,
+      //                  obs);
       
       
 
