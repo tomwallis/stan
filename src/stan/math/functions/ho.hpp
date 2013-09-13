@@ -88,11 +88,6 @@ namespace stan {
       for (size_t n = 0; n < t.size(); n++)
         times[n+1] = t[n];
       
-      std::pair<typename std::vector<T>::iterator, 
-                typename std::vector<T>::iterator>
-        times_range(boost::begin(times),
-                    boost::begin(times)+t.size()+1);
-
       T times_start = 0.0;
       T times_end = t[t.size()-1];
       T dt = t[0];
@@ -119,11 +114,7 @@ namespace stan {
                                                             T,
                                                             vector<T>,
                                                             T>() ) , 
-                      harm_osc, x0_state, times_range, dt, obs);
-      //                 //harm_osc, x0_state, boost::begin(times), boost::end(times), dt);
-      // //obs);
-      // std::cout << "times.start(): " << *(times.begin()) << std::endl;
-      // std::cout << "times.end(): " << *(times.end()-1) << std::endl;
+                      harm_osc, x0_state, boost::begin(times), boost::end(times), dt, obs);
       
       return obs.get();
     }
