@@ -42,6 +42,7 @@ namespace stan {
         : m_states( states ) , m_times( times ) { }
       
       void operator()( const std::vector<T> &x , T t ) {
+        //std::cout << t << ": (" << x[0] << ", " << x[1] << ")" << std::endl;
         m_states.push_back( x );
         m_times.push_back( t );
       }
@@ -81,24 +82,49 @@ namespace stan {
       vector<T> x0_state(2);
       for (size_t n = 0; n < 2; n++)
         x0_state[n] = x0[n];
+
+      std::vector<T> times(t.size()+1);
+      times[0] = 0.0;
+      for (size_t n = 0; n < t.size(); n++)
+        times[n+1] = t[n];
       
+      std::pair<typename std::vector<T>::iterator, 
+                typename std::vector<T>::iterator>
+        times_range(boost::begin(times),
+                    boost::begin(times)+t.size()+1);
+
       T times_start = 0.0;
       T times_end = t[t.size()-1];
       T dt = t[0];
 
+
       vector<vector<T> > x_vec;
-      vector<T> times;
-      push_back_state_and_time<T> obs(x_vec, times);
+      vector<T> t_vec;
+      push_back_state_and_time<T> obs(x_vec, t_vec);
 
       harm_osc<T> harm_osc(gamma);
 
-      integrate_const(make_dense_output(1.0e-6, 1.0e-6, 
+      // integrate_const(make_dense_output(1.0e-6, 1.0e-6, 
+      //                                   runge_kutta_dopri5< vector<T>,
+      //                                                       T,
+      //                                                       vector<T>,
+      //                                                       T>() ) , 
+      //                 harm_osc, x0_state, times_start, times_end, dt,
+      //                 obs);
+      
+      
+
+      integrate_times(make_dense_output(1.0e-6, 1.0e-6, 
                                         runge_kutta_dopri5< vector<T>,
                                                             T,
                                                             vector<T>,
                                                             T>() ) , 
-                      harm_osc, x0_state, times_start, times_end, dt,
-                      obs);
+                      harm_osc, x0_state, times_range, dt, obs);
+      //                 //harm_osc, x0_state, boost::begin(times), boost::end(times), dt);
+      // //obs);
+      // std::cout << "times.start(): " << *(times.begin()) << std::endl;
+      // std::cout << "times.end(): " << *(times.end()-1) << std::endl;
+      
       return obs.get();
     }
     
