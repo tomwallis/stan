@@ -71,10 +71,10 @@ namespace stan {
       }
     };
     
-    template <class T>
+    template <class T, class T0>
     Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic> 
     ho(const std::vector<double>& t,
-       const Eigen::Matrix<double,Eigen::Dynamic,1>& x0,
+       const Eigen::Matrix<T0,Eigen::Dynamic,1>& x0,
        const T& gamma) {
       using namespace std;
       using namespace boost::numeric::odeint;
