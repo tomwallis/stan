@@ -12,3 +12,4 @@ fit_fit_ss <- extract(fit_fit, permuted=TRUE);
 traceplot(fit_fit);
 
 # histograms of fits nice here
+# test synch.
